@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import { JetBrains_Mono, Manrope, Unbounded } from 'next/font/google';
 import { site } from '@/data/site';
 import { assetPath } from '@/lib/assetPath';
-import { themeBootstrapScript } from '@/lib/theme';
 import './globals.css';
 import './punk.css';
 
@@ -16,8 +15,14 @@ export const metadata: Metadata = {
   icons: { icon: assetPath('/favicon.svg') },
   openGraph: { title: site.metadata.title, description: site.metadata.description, locale: 'ru_RU', type: 'website' },
 };
-export const viewport: Viewport = { width: 'device-width', initialScale: 1 };
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  colorScheme: 'dark',
+  themeColor: '#060706',
+};
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ru" data-theme="dark" suppressHydrationWarning className={`${bodyFont.variable} ${displayFont.variable} ${technicalFont.variable}`}><head><script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} /></head><body>{children}</body></html>;
+  return <html lang="ru" className={`${bodyFont.variable} ${displayFont.variable} ${technicalFont.variable}`}><body>{children}</body></html>;
 }
+
