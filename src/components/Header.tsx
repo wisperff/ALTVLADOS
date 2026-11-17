@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { site } from '@/data/site';
 import { Icon } from './Icon';
 import { useTickets } from './TicketProvider';
-import { ThemeToggle } from './ThemeToggle';
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -71,7 +70,6 @@ export function Header() {
         </nav>
 
         <div className="header-actions">
-          <ThemeToggle />
           <button
             className="button button-primary header-ticket"
             onClick={() => {
@@ -117,3 +115,4 @@ export function Header() {
     </header>
   );
 }
+

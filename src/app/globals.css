@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "./theme-tokens.css";
+@import "./tokens.css";
 
 @theme inline {
   --font-sans: var(--font-body);
@@ -295,3 +295,4 @@ svg { flex-shrink: 0; }
   .reveal[data-reveal] { opacity: 1; transform: none; }
   .button:hover, .hero-route:hover svg { transform: none; }
 }
+
