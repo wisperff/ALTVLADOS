@@ -1,0 +1,67 @@
+/* Static decoration is the default, including before hydration. */
+.ambient-stage { isolation: isolate; }
+.ambient-stage .hero-art-top,
+.ambient-stage .art-label,
+.ambient-stage .art-registration { z-index: 2; }
+.stage-decoration { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+.stage-light {
+  position: absolute; left: -12%; top: -15%; width: 62%; height: 130%;
+  background: linear-gradient(90deg, transparent, #b8ff0018 48%, #ff1f7a28 50%, transparent 54%);
+  opacity: .45; transform: translate3d(8%, 0, 0) rotate(-22deg);
+}
+.stage-corner { position: absolute; width: 22px; height: 22px; border-color: #b8ff0080; }
+.stage-corner-top { top: 65px; left: 20px; border-top: 1px solid #b8ff0080; border-left: 1px solid #b8ff0080; }
+.stage-corner-bottom { right: 20px; bottom: 64px; border-right: 1px solid #ff1f7a80; border-bottom: 1px solid #ff1f7a80; }
+.stage-signal { position: absolute; left: 22px; bottom: 66px; display: flex; align-items: center; gap: 4px; height: 21px; }
+.stage-signal i { display: block; width: 3px; height: 19px; background: var(--accent); transform: scaleY(.45); transform-origin: center; opacity: .75; }
+.stage-signal i:nth-child(2), .stage-signal i:nth-child(4) { transform: scaleY(.75); }
+.stage-signal i:nth-child(3) { transform: scaleY(1); }
+.stage-scale { position: absolute; right: 22px; top: 77px; display: grid; justify-items: end; gap: 7px; }
+.stage-scale i { display: block; height: 1px; width: 8px; background: #f1f5e840; }
+.stage-scale i:nth-child(3n + 1) { width: 16px; background: #b8ff0080; }
+.stage-scale i:nth-child(3n) { background: #ff1f7a80; }
+
+/* A single pass on hover/focus; no pointer or scroll handlers. */
+.button-primary { position: relative; isolation: isolate; overflow: hidden; }
+.button-primary::before {
+  content: ''; position: absolute; inset: -30% auto -30% 0; width: 30%; z-index: -1;
+  background: linear-gradient(90deg, transparent, #ffffff65, transparent);
+  opacity: 0; transform: translate3d(-160%, 0, 0) skewX(-20deg);
+}
+.button-primary svg { transition: transform .22s ease; }
+
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .ambient-stage[data-ambient='running'] .stage-light { animation: stage-drift 12s ease-in-out infinite alternate; }
+  .ambient-stage[data-ambient='running'] .stage-signal i { animation: stage-sound 1.3s ease-in-out infinite alternate; }
+  .ambient-stage[data-ambient='running'] .stage-signal i:nth-child(2) { animation-delay: -.7s; }
+  .ambient-stage[data-ambient='running'] .stage-signal i:nth-child(3) { animation-delay: -.3s; }
+  .ambient-stage[data-ambient='running'] .stage-signal i:nth-child(4) { animation-delay: -1s; }
+  .ambient-stage[data-ambient='running'] .stage-signal i:nth-child(5) { animation-delay: -.5s; }
+  .button-primary::before { transition: transform .65s ease, opacity .2s ease; }
+  .button-primary:hover::before,
+  .button-primary:focus-visible::before { opacity: .8; transform: translate3d(440%, 0, 0) skewX(-20deg); }
+  .button-primary:hover svg,
+  .button-primary:focus-visible svg { transform: translate(2px, -2px); }
+}
+
+@keyframes stage-drift {
+  from { transform: translate3d(-10%, 0, 0) rotate(-22deg); opacity: .3; }
+  to { transform: translate3d(45%, 0, 0) rotate(-18deg); opacity: .7; }
+}
+@keyframes stage-sound {
+  from { transform: scaleY(.25); opacity: .45; }
+  to { transform: scaleY(1); opacity: .9; }
+}
+
+@media (max-width: 767px) {
+  .stage-light { width: 50%; opacity: .3; }
+  .stage-scale { display: none; }
+  .stage-corner-top { top: 57px; left: 16px; }
+  .stage-corner-bottom { right: 16px; bottom: 57px; }
+  .stage-signal { left: 17px; bottom: 59px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage-light, .stage-signal i { animation: none !important; }
+  .button-primary::before { display: none; }
+  .button-primary svg { transition: none; }
+}
