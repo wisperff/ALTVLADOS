@@ -26,8 +26,17 @@ export function getThemeMode(): ThemeMode {
   return isThemeMode(mode) ? mode : 'auto';
 }
 
-export function getServerThemeMode(): ThemeMode {
-  return 'auto';
+export function getColorTheme(): ColorTheme {
+  const theme = document.documentElement.dataset.theme;
+  if (theme === 'light' || theme === 'dark') return theme;
+  const mode = getThemeMode();
+  return mode === 'auto'
+    ? (window.matchMedia(SYSTEM_THEME_QUERY).matches ? 'light' : 'dark')
+    : mode;
+}
+
+export function getServerColorTheme(): ColorTheme {
+  return 'dark';
 }
 
 function applyTheme(mode: ThemeMode) {
@@ -59,7 +68,9 @@ export function setThemeMode(mode: ThemeMode) {
 export function subscribeToTheme(onChange: () => void) {
   const system = window.matchMedia(SYSTEM_THEME_QUERY);
   const onSystemChange = () => {
-    if (getThemeMode() === 'auto') applyTheme('auto');
+    if (getThemeMode() !== 'auto') return;
+    applyTheme('auto');
+    onChange();
   };
   const onStorageChange = (event: StorageEvent) => {
     if (event.key !== THEME_STORAGE_KEY && event.key !== null) return;

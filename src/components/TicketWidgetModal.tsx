@@ -164,12 +164,14 @@ export default function TicketWidgetModal({ show, isOpen, revision, onClose, onE
 
       <div className="ticket-scroll" tabIndex={0} role="region" aria-labelledby="ticket-title">
         <div className="ticket-content">
-          <p className="ticket-kicker text-[10px] font-bold uppercase tracking-[0.2em] text-accent-ink">{demo ? copy.demoLabel : copy.provider}</p>
-          <h2 id="ticket-title" className="ticket-heading font-bold uppercase tracking-tight">{show?.title || copy.title}</h2>
-          <p id="ticket-description" className="mt-3 max-w-lg text-sm leading-relaxed text-ui-muted">{copy.description}</p>
+          <div className="ticket-copy-surface">
+            <p className="ticket-kicker text-[10px] font-bold uppercase tracking-[0.2em] text-accent-ink">{demo ? copy.demoLabel : copy.provider}</p>
+            <h2 id="ticket-title" className="ticket-heading font-bold uppercase tracking-tight">{show?.title || copy.title}</h2>
+            <p id="ticket-description" className="mt-3 max-w-lg text-sm leading-relaxed text-ui-muted">{copy.description}</p>
+          </div>
 
           {demo ? (
-            <div className="ticket-inset tonal-card mt-8">
+            <div className="ticket-inset tonal-card">
               <svg aria-hidden="true" className="h-10 w-10 text-accent-ink" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 10h30v7a3 3 0 0 0 0 6v7H5v-7a3 3 0 0 0 0-6v-7Z" /><path d="M25 10v20" strokeDasharray="3 3" /></svg>
               <h3 className="mt-6 whitespace-pre-line text-2xl font-semibold">{copy.demoTitle}</h3>
               <p className="mt-3 text-sm leading-relaxed text-ui-muted">{copy.demoDescription}</p>
@@ -187,7 +189,7 @@ export default function TicketWidgetModal({ show, isOpen, revision, onClose, onE
               <p className="ticket-status text-center text-xs leading-relaxed text-ui-faint">{copy.demoStatus}</p>
             </div>
           ) : embedUrl ? (
-            <div className="mt-7">
+            <div className="ticket-copy-surface">
               {frameLoading && <p role="status" className="ticket-loading-note text-sm text-ui-muted">{copy.loadingLabel}</p>}
               <iframe
                 title={copy.title}
@@ -204,7 +206,7 @@ export default function TicketWidgetModal({ show, isOpen, revision, onClose, onE
             </div>
           ) : <p role="status" className="ticket-config-error ticket-inset tonal-card text-sm leading-relaxed text-ui-secondary">{copy.configError}</p>}
 
-          {!demo && offerUrl && <a className="mt-5 inline-flex min-h-11 items-center text-xs text-ui-faint underline underline-offset-4 hover:text-ui-link" href={offerUrl} target="_blank" rel="noopener noreferrer">{copy.offerLabel}</a>}
+          {!demo && offerUrl && <a className="ticket-copy-surface inline-flex min-h-11 items-center text-xs text-ui-faint underline underline-offset-4 hover:text-ui-link" href={offerUrl} target="_blank" rel="noopener noreferrer">{copy.offerLabel}</a>}
         </div>
       </div>
     </dialog>

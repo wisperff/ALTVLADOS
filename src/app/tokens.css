@@ -6,7 +6,6 @@
   --section-space: 7rem;
   --panel-padding: clamp(1.25rem, 4vw, 3rem);
   --card-padding: clamp(1.25rem, 2.4vw, 1.75rem);
-  --dialog-padding: clamp(2rem, 4vw, 3rem);
   --radius-panel: 28px;
   --radius-card: 16px;
   --radius-pill: 999px;
@@ -83,8 +82,12 @@
   --telegram-border: rgb(220 38 38 / 45%);
   --telegram-glow: rgb(127 29 29 / 30%);
   --dialog-surface: #120d0e;
-  --ticket-carpet-frame: 16px;
-  --ticket-panel: rgb(20 20 23 / 95%);
+  --ticket-carpet-frame: 20px;
+  --ticket-panel: rgb(13 11 12 / 72%);
+  --ticket-panel-border: rgb(255 255 255 / 15%);
+  --ticket-copy: #d4d4d8;
+  --ticket-muted: #b0b0b8;
+  --ticket-accent-ink: #f4f4f5;
   --carpet-thread: #cbb89d;
   --cookie-surface: #141416;
   --footer-bg: rgb(9 9 11 / 72%);
@@ -173,7 +176,11 @@
   --telegram-surface: rgb(185 28 28 / 5%);
   --telegram-border: rgb(185 28 28 / 32%);
   --telegram-glow: rgb(185 28 28 / 12%);
-  --ticket-panel: rgb(250 249 246 / 97%);
+  --ticket-panel: rgb(250 247 242 / 80%);
+  --ticket-panel-border: rgb(0 0 0 / 15%);
+  --ticket-copy: #3f3f46;
+  --ticket-muted: #4b4b54;
+  --ticket-accent-ink: #991b1b;
   --cookie-surface: #faf9f6;
   --footer-bg: rgb(239 237 232 / 80%);
   --ambient-smoke: rgb(255 255 255 / 35%);
