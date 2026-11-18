@@ -37,6 +37,9 @@
   --text-hero-alias: var(--text-copy);
   --text-status: var(--text-copy);
   --text-show-meta: #bdbdb5;
+  --eyebrow-plus: #ff285e;
+  --eyebrow-text: #e8e8e2;
+  --eyebrow-line: #454540;
   --border-line: #2b2b30;
   --border-frame: #34343b;
   --border-control: #5e5e65;
