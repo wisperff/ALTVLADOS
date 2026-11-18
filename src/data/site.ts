@@ -65,7 +65,7 @@ export const site = {
         primary: 'Афиша и билеты',
         secondary: 'Ворваться в Telegram',
         visual: '/images/hero-industrial.svg',
-        visualAlt: 'Индустриальная сцена в кислотном лаймовом и розовом свете',
+        visualAlt: 'Индустриальная сцена в красном и белом свете',
         visualLabel: 'Территория громкого звука',
         scroll: 'Листай. Дальше громче.',
         ticker: ['ГРОМКО', 'ГРЯЗНО', 'ЖИВОЙ ЗВУК', 'ALTZAVOD', 'БЕЗ ЦЕНЗУРЫ']

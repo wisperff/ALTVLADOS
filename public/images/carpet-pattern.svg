@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="384" height="384" viewBox="0 0 384 384" fill="none">
+  <title>Геометрический ковровый орнамент</title>
+  <desc>Авторский бесшовный узор в бордовых, угольных и приглушённых бежевых тонах. Восьмигранные медальоны, ромбы и мелкий тканый орнамент.</desc>
+  <defs>
+    <pattern id="weave" width="8" height="8" patternUnits="userSpaceOnUse">
+      <path d="M0 1h8M0 5h8" stroke="#120d0e" stroke-opacity=".18"/>
+      <path d="M1 0v8M5 0v8" stroke="#c7b8a1" stroke-opacity=".035"/>
+    </pattern>
+    <pattern id="border" y="84" width="48" height="24" patternUnits="userSpaceOnUse">
+      <path d="M0 0h48v24H0z" fill="#120d0e"/>
+      <path d="M0 2h48M0 22h48" stroke="#8c8278"/>
+      <path d="m12 5 7 7-7 7-7-7Zm24 0 7 7-7 7-7-7Z" fill="#c7b8a1"/>
+      <path d="m12 9 3 3-3 3-3-3Zm24 0 3 3-3 3-3-3Z" fill="#8f1920"/>
+      <path d="M0 12h5m14 0h10m14 0h5" stroke="#8c8278"/>
+    </pattern>
+    <g id="bands">
+      <path d="M0 82h384v28H0zM0 274h384v28H0z" fill="#8f1920"/>
+      <path d="M0 84h384v24H0zM0 276h384v24H0z" fill="url(#border)"/>
+    </g>
+    <g id="flower">
+      <path d="M-7-20H7v13h13V7H7v13H-7V7h-13V-7h13Z" fill="#120d0e" stroke="#8c8278" stroke-width="2"/>
+      <path d="m0-12 12 12L0 12-12 0Z" fill="#c7b8a1"/>
+      <path d="m0-5 5 5-5 5-5-5Z" fill="#8f1920"/>
+    </g>
+    <g id="medallion">
+      <path d="M-34-82h68l48 48v68L34 82h-68l-48-48v-68Z" fill="#120d0e" stroke="#8c8278" stroke-width="4"/>
+      <path d="M-29-70h58l41 41v58L29 70h-58l-41-41v-58Z" fill="#c7b8a1"/>
+      <path d="M-24-60h48l36 36v48L24 60h-48l-36-36v-48Z" fill="#8f1920" stroke="#120d0e" stroke-width="3"/>
+      <path d="m0-54 16 20 25-7-7 25L54 0 34 16l7 25-25-7L0 54l-16-20-25 7 7-25L-54 0l20-16-7-25 25 7Z" fill="#120d0e"/>
+      <path d="m0-37 11 16 18-8-8 18L37 0 21 11l8 18-18-8L0 37l-11-16-18 8 8-18L-37 0l16-11-8-18 18 8Z" fill="#c7b8a1"/>
+      <path d="m0-20 20 20L0 20-20 0Z" fill="#6b1116" stroke="#120d0e" stroke-width="3"/>
+      <path d="m0-8 8 8-8 8-8-8Z" fill="#8c8278"/>
+      <path d="M-46-46h8m-4-4v8m80-4h8m-4-4v8m-88 84h8m-4-4v8m80-4h8m-4-4v8" stroke="#c7b8a1" stroke-width="2"/>
+    </g>
+    <g id="corner">
+      <path d="M-22-52h44l30 30v44L22 52h-44l-30-30v-44Z" fill="#120d0e" stroke="#8c8278" stroke-width="3"/>
+      <path d="m0-40 13 17 20-10-10 20L40 0 23 13l10 20-20-10L0 40l-13-17-20 10 10-20L-40 0l17-13-10-20 20 10Z" fill="#8f1920"/>
+      <path d="m0-25 25 25L0 25-25 0Z" fill="#c7b8a1"/>
+      <path d="m0-14 14 14L0 14-14 0Z" fill="#6b1116"/>
+      <path d="M-5-5H5V5H-5Z" fill="#8c8278"/>
+    </g>
+  </defs>
+  <path d="M0 0h384v384H0z" fill="#6b1116"/>
+  <use href="#bands"/>
+  <use href="#bands" transform="rotate(90 192 192)"/>
+  <use href="#medallion" x="192" y="192"/>
+  <use href="#corner" x="0" y="0"/>
+  <use href="#corner" x="384" y="0"/>
+  <use href="#corner" x="0" y="384"/>
+  <use href="#corner" x="384" y="384"/>
+  <use href="#flower" x="48" y="192"/>
+  <use href="#flower" x="336" y="192"/>
+  <use href="#flower" x="192" y="48"/>
+  <use href="#flower" x="192" y="336"/>
+  <path d="m48 32 16 16-16 16-16-16Zm288 0 16 16-16 16-16-16ZM48 320l16 16-16 16-16-16Zm288 0 16 16-16 16-16-16Z" fill="#8f1920" stroke="#8c8278" stroke-width="2"/>
+  <path d="M0 0h384v384H0z" fill="url(#weave)"/>
+</svg>
