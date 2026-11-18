@@ -22,7 +22,6 @@ export function ContactsSection() {
               <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-accent-ink" aria-hidden="true">
                 <path d="m4 15 23-9-5 21-8-7-5 3 1-7 13-7-13 10-6-4Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <Icon name="arrowUpRight" className="h-4 w-4 text-detail" />
             </div>
             <h3 className="telegram-heading !mt-6 min-w-0 text-xl font-semibold tracking-tight [overflow-wrap:anywhere] sm:text-2xl">{telegram.title}</h3>
             {telegram.href ? (

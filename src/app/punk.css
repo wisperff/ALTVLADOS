@@ -79,7 +79,6 @@ body::after {
   border-color: var(--telegram-border);
   box-shadow: inset 0 1px 0 var(--glass-highlight), 0 0 50px -15px var(--telegram-glow);
 }
-.telegram-surface > div:first-child > svg:last-child { color: var(--contrast-ink); }
 .button { transition: transform .16s ease, opacity .16s ease; }
 .button:active { transform: scale(.97); }
 .button-primary:disabled:hover { transform: none; }
@@ -130,5 +129,16 @@ body::after {
   .button { transition: opacity 120ms linear; }
   .button-primary:hover, .button:active, .punk-tag, .punk-sticker,
   .hero-alias span { transform: none; }
+}
+
+/* Open more of the original woven border on paper surfaces; dark stays intact. */
+:root[data-theme='light'] .ticket-dialog { --ticket-carpet-frame: 28px; }
+:root[data-theme='light'] .ticket-content { gap: 12px; }
+:root[data-theme='light'] .ticket-copy-surface,
+:root[data-theme='light'] .ticket-dialog .ticket-inset { padding: clamp(.875rem, 2.5vw, 1.125rem); }
+:root[data-theme='light'] .ticket-dialog #ticket-title { margin-top: 12px; }
+
+@media (min-width: 640px) {
+  :root[data-theme='light'] .ticket-dialog { --ticket-carpet-frame: 44px; }
 }
 

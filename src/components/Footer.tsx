@@ -1,6 +1,7 @@
 import { site } from '@/data/site';
 import { Icon } from './Icon';
 import { BrandMark } from './BrandMark';
+import { PrivacyDisclosure, PrivacyLink } from './PrivacyLink';
 
 export function Footer() {
   const footer = site.footer;
@@ -37,16 +38,16 @@ export function Footer() {
             <p className="footer-legal-details mt-2 max-w-lg text-xs leading-relaxed text-detail">{footer.legalDetails}</p>
           </div>
           <div className="footer-legal-links flex flex-col items-start gap-3 lg:items-end">
-            <a href={footer.privacy.href || '#privacy'} className="inline-flex min-h-11 items-center text-xs underline decoration-edge-decoration underline-offset-4">{footer.privacy.label}</a>
+            <PrivacyLink className="inline-flex min-h-11 items-center text-xs underline decoration-edge-decoration underline-offset-4">{footer.privacy.label}</PrivacyLink>
             {offerUrl ? <a href={offerUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-xs underline decoration-edge-decoration underline-offset-4">{footer.offer.label}</a> : <p className="text-xs text-detail">{footer.offer.pendingLabel}</p>}
           </div>
         </div>
 
         {!footer.privacy.href && (
-          <details id="privacy" className="mt-7 scroll-mt-24 border-t border-edge-subtle pt-5 text-xs text-detail">
+          <PrivacyDisclosure className="mt-7 scroll-mt-24 border-t border-edge-subtle pt-5 text-xs text-detail">
             <summary className="w-fit cursor-pointer py-2 text-secondary">{footer.privacy.title}</summary>
             <p className="footer-privacy-copy mt-3 max-w-3xl leading-relaxed">{footer.privacy.body}</p>
-          </details>
+          </PrivacyDisclosure>
         )}
         <div className="mt-7 flex flex-col justify-between gap-3 border-t border-edge-subtle pt-6 font-mono text-[10px] tracking-wide text-detail sm:flex-row">
           <p>© {new Date().getFullYear()} {footer.copyright}</p>
