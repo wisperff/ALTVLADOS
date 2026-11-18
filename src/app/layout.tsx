@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { JetBrains_Mono, Manrope, Unbounded } from 'next/font/google';
 import { site } from '@/data/site';
 import { assetPath } from '@/lib/assetPath';
+import { themeBootstrap } from '@/lib/themeBootstrap';
 import './globals.css';
 import './punk.css';
 
@@ -18,11 +19,19 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  colorScheme: 'dark',
-  themeColor: '#09090b',
+  colorScheme: 'dark light',
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
+    { media: '(prefers-color-scheme: light)', color: '#efede8' },
+  ],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ru" className={`${bodyFont.variable} ${displayFont.variable} ${technicalFont.variable}`}><body>{children}</body></html>;
+  return (
+    <html lang="ru" suppressHydrationWarning className={`${bodyFont.variable} ${displayFont.variable} ${technicalFont.variable}`}>
+      <head><script id="theme-bootstrap" dangerouslySetInnerHTML={{ __html: themeBootstrap }} /></head>
+      <body>{children}</body>
+    </html>
+  );
 }
 

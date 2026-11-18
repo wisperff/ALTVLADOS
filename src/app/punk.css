@@ -31,8 +31,6 @@ body::after {
   text-transform: uppercase;
 }
 .brand-wordmark small { font-size: 8px; letter-spacing: .2em; }
-.brand-symbol { transform: skewX(-22deg); }
-.brand-symbol i:last-child { background: var(--brand-secondary); }
 .desktop-nav a { font-family: var(--font-tech), monospace; }
 .desktop-nav a:hover, .mobile-nav a:hover { color: var(--contrast-ink); }
 .hero-meta .eyebrow {
@@ -60,9 +58,9 @@ body::after {
 .venue-gallery > .reveal:last-child .gallery-card { border-bottom-color: var(--contrast-border); }
 .gallery-card figcaption { font-family: var(--font-tech), monospace; }
 .show-visual {
-  background: linear-gradient(145deg, #242427, #09090b 60%, #2b1114);
+  background: linear-gradient(145deg, var(--poster-start), var(--poster-center) 60%, var(--poster-end));
   background-image: repeating-linear-gradient(90deg, transparent 0 47px, var(--grid-ink) 47px 48px),
-    linear-gradient(145deg, #242427, #09090b 60%, #2b1114);
+    linear-gradient(145deg, var(--poster-start), var(--poster-center) 60%, var(--poster-end));
 }
 .show-orbit { border-color: var(--accent-edge-soft); }
 .orbit-two { border-color: var(--contrast-border); transform: rotate(-18deg); }
@@ -118,9 +116,6 @@ body::after {
 }
 @media (max-width: 767px) {
   .brand-wordmark { font-size: 14px; }
-  .brand-symbol { height: 24px; }
-  .brand-symbol i { height: 24px; width: 6px; }
-  .brand-symbol i:last-child { height: 17px; }
   .hero-meta .eyebrow { padding: 8px 10px; font-size: 9px; }
   .ticker-track { gap: 20px; padding: 13px 10px; }
   .ticker-track > span { gap: 20px; font-size: 17px; }
@@ -129,8 +124,6 @@ body::after {
   .brand { gap: 6px; }
   .brand-wordmark { font-size: 11px; }
   .brand-wordmark small { font-size: 7px; letter-spacing: .12em; }
-  .brand-symbol { gap: 3px; }
-  .brand-symbol i { width: 4px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ticker-motion { animation-duration: 72s; }

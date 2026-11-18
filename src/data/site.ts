@@ -54,7 +54,12 @@ export const site = {
         skip: 'Перейти к содержимому',
         arrow: 'Перейти',
         backToTop: 'Наверх',
-        navigationLabel: 'Навигация по сайту'
+        navigationLabel: 'Навигация по сайту',
+        theme: {
+            label: 'Тема',
+            switchLabel: 'Переключить',
+            modes: { auto: 'Авто', light: 'Светлая', dark: 'Тёмная' }
+        }
     },
     hero: {
         eyebrow: 'Независимая андеграунд-площадка',
@@ -65,7 +70,7 @@ export const site = {
         primary: 'Афиша и билеты',
         secondary: 'Ворваться в Telegram',
         visual: '/images/hero-industrial.svg',
-        visualAlt: 'Индустриальная сцена в красном и белом свете',
+        visualAlt: 'Фирменный знак Altzavod: колонка-буква «А», глаз с лучами и басовый динамик',
         visualLabel: 'Территория громкого звука',
         scroll: 'Листай. Дальше громче.',
         ticker: ['ГРОМКО', 'ГРЯЗНО', 'ЖИВОЙ ЗВУК', 'ALTZAVOD', 'БЕЗ ЦЕНЗУРЫ']

@@ -7,6 +7,8 @@ import { getAnchorTarget, navigateToAnchor } from '@/lib/anchorNavigation';
 import { MENU_EXIT_MS, REDUCED_EXIT_MS } from '@/lib/motion';
 import { Icon } from './Icon';
 import { useTickets } from './TicketProvider';
+import { BrandMark } from './BrandMark';
+import { ThemeToggle } from './ThemeToggle';
 
 type MenuPhase = 'closed' | 'opening' | 'open' | 'closing';
 type CloseRequest = { restoreFocus?: boolean; afterExit?: () => void };
@@ -307,9 +309,7 @@ export function Header() {
             aria-label={site.ui.home}
             onClick={event => onAnchorClick(event, '#top')}
           >
-            <span className="brand-symbol" aria-hidden="true">
-              <i /><i /><i />
-            </span>
+            <BrandMark className="header-brand-mark" decorative />
             <span className="brand-wordmark">
               {site.name}<small>{site.alias}</small>
             </span>
@@ -322,6 +322,7 @@ export function Header() {
           </nav>
 
           <div className="header-actions">
+            <ThemeToggle />
             <button
               type="button"
               className="button button-primary header-ticket"

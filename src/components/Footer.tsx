@@ -1,5 +1,6 @@
 import { site } from '@/data/site';
 import { Icon } from './Icon';
+import { BrandMark } from './BrandMark';
 
 export function Footer() {
   const footer = site.footer;
@@ -9,9 +10,12 @@ export function Footer() {
       <div className="section-shell !py-10 sm:!py-14">
         <div className="footer-main flex flex-col justify-between gap-6 lg:flex-row lg:items-start">
           <div className="min-w-0">
-            <a href="#top" className="footer-brand inline-flex max-w-full flex-wrap items-baseline gap-x-3 gap-y-1" aria-label={site.ui.home}>
-              <span className="font-[family-name:var(--font-display)] text-3xl font-semibold uppercase tracking-tight">{site.name}</span>
-              <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-wider text-detail">/{site.alias}</span>
+            <a href="#top" className="footer-brand inline-flex max-w-full items-center gap-3" aria-label={site.ui.home}>
+              <BrandMark className="footer-brand-mark h-10 w-10 shrink-0" />
+              <span className="footer-brand-copy min-w-0">
+                <span className="font-[family-name:var(--font-display)] text-3xl font-semibold uppercase tracking-tight">{site.name}</span>
+                <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-wider text-detail">/{site.alias}</span>
+              </span>
             </a>
             <p className="footer-tagline mt-3 text-sm text-detail">{footer.tagline}</p>
           </div>

@@ -1,4 +1,4 @@
-/* Factory palette: charcoal, steel, white and deep industrial red. */
+/* Shared geometry and semantic factory palette. The early theme script resolves auto. */
 :root {
   color-scheme: dark;
   --content-max: 84rem;
@@ -6,7 +6,7 @@
   --section-space: 7rem;
   --panel-padding: clamp(1.25rem, 4vw, 3rem);
   --card-padding: clamp(1.25rem, 2.4vw, 1.75rem);
-  --dialog-padding: clamp(1.5rem, 4vw, 2.25rem);
+  --dialog-padding: clamp(2rem, 4vw, 3rem);
   --radius-panel: 28px;
   --radius-card: 16px;
   --radius-pill: 999px;
@@ -16,7 +16,7 @@
   --page-bg: #09090b;
   --page-end: #111114;
   --surface-panel: #141417;
-  --surface-raised: #18181c;
+  --surface-raised: #1c1c21;
   --surface-cookie: #141416;
   --surface-inset: rgb(255 255 255 / 2.5%);
   --header-bg: rgb(9 9 11 / 94%);
@@ -74,6 +74,7 @@
   --glass-mobile: #141417;
   --glass-border: rgb(255 255 255 / 12%);
   --glass-highlight: rgb(255 255 255 / 6%);
+  --panel-shadow: 0 18px 48px rgb(0 0 0 / 24%);
   --tonal-surface: #1c1c21;
   --tonal-hover-layer: rgb(255 255 255 / 3%);
   --control-bg: #222227;
@@ -82,12 +83,9 @@
   --telegram-border: rgb(220 38 38 / 45%);
   --telegram-glow: rgb(127 29 29 / 30%);
   --dialog-surface: #120d0e;
-  --ticket-carpet-frame: 12px;
-  --carpet-thread: #8c8278;
-  --carpet-scrim-edge: rgb(18 13 14 / 66%);
-  --carpet-scrim-center: rgb(18 13 14 / 54%);
-  --carpet-copy: #e4e4e7;
-  --carpet-detail: #d4d4d8;
+  --ticket-carpet-frame: 16px;
+  --ticket-panel: rgb(20 20 23 / 95%);
+  --carpet-thread: #cbb89d;
   --cookie-surface: #141416;
   --footer-bg: rgb(9 9 11 / 72%);
   --ambient-smoke: rgb(255 255 255 / 4%);
@@ -100,6 +98,9 @@
   --elevation-shadow: rgb(0 0 0 / 24%);
   --cta-glow: rgb(220 38 38 / 35%);
   --cta-glow-hover: rgb(220 38 38 / 45%);
+  --poster-start: #242427;
+  --poster-center: #09090b;
+  --poster-end: #2b1114;
   /* Artwork and operator content retain their independent dark or white canvas. */
   --on-art-primary: #f4f4f5;
   --on-art-copy: #d4d4d8;
@@ -108,4 +109,82 @@
   --operator-bg: #fff;
   --muted: var(--text-muted);
   --line: var(--border-line);
+}
+
+/* Only color tokens change; component geometry and motion are shared. */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --page-bg: #efede8;
+  --page-end: #e5e2dc;
+  --surface-panel: #faf9f6;
+  --surface-raised: #fff;
+  --surface-cookie: #faf9f6;
+  --surface-inset: rgb(17 17 20 / 3%);
+  --header-bg: rgb(239 237 232 / 94%);
+  --text-primary: #111114;
+  --text-muted: #52525b;
+  --text-copy: #3f3f46;
+  --text-detail: #52525b;
+  --text-subtle: #62626b;
+  --text-strong: #26262b;
+  --text-ui-faint: #62626b;
+  --text-brand-detail: #52525b;
+  --text-show-meta: #3f3f46;
+  --eyebrow-plus: #b91c1c;
+  --eyebrow-text: #262626;
+  --eyebrow-line: #c8c5bd;
+  --border-line: #d1cec7;
+  --border-frame: #c8c5bd;
+  --border-control: #8b8882;
+  --border-subtle: rgb(17 17 20 / 10%);
+  --border-soft: rgb(17 17 20 / 15%);
+  --border-medium: rgb(17 17 20 / 20%);
+  --border-hover: rgb(17 17 20 / 35%);
+  --border-strong: rgb(17 17 20 / 32%);
+  --border-decoration: rgb(17 17 20 / 25%);
+  --accent: #b91c1c;
+  --accent-hover: #dc2626;
+  --ticker-bg: #b91c1c;
+  --accent-ink: #b91c1c;
+  --title-ink: #111114;
+  --accent-edge: rgb(185 28 28 / 60%);
+  --accent-edge-soft: rgb(185 28 28 / 35%);
+  --demo-edge: rgb(17 17 20 / 20%);
+  --focus-ring: #b91c1c;
+  --brand-primary: #b91c1c;
+  --brand-secondary: #626269;
+  --brand-ink: #111114;
+  --brand-footer-detail: #52525b;
+  --contrast-accent: #26262b;
+  --contrast-ink: #3f3f46;
+  --contrast-border: rgb(17 17 20 / 25%);
+  --contrast-tint: rgb(17 17 20 / 4%);
+  --on-contrast: #faf9f6;
+  --glass-surface: rgb(250 249 246 / 85%);
+  --glass-fallback: #faf9f6;
+  --glass-mobile: #faf9f6;
+  --glass-border: rgb(17 17 20 / 12%);
+  --glass-highlight: rgb(255 255 255 / 85%);
+  --panel-shadow: 0 4px 24px rgb(17 17 20 / 6%);
+  --tonal-surface: #fff;
+  --tonal-hover-layer: rgb(17 17 20 / 3%);
+  --control-bg: #e6e3dd;
+  --control-hover-layer: #dbd7d0;
+  --telegram-surface: rgb(185 28 28 / 5%);
+  --telegram-border: rgb(185 28 28 / 32%);
+  --telegram-glow: rgb(185 28 28 / 12%);
+  --ticket-panel: rgb(250 249 246 / 97%);
+  --cookie-surface: #faf9f6;
+  --footer-bg: rgb(239 237 232 / 80%);
+  --ambient-smoke: rgb(255 255 255 / 35%);
+  --ambient-burgundy: rgb(185 28 28 / 6%);
+  --ambient-graphite: rgb(130 126 118 / 9%);
+  --grain-ink: #171719;
+  --grid-ink: rgb(17 17 20 / 7%);
+  --elevation-shadow: rgb(17 17 20 / 8%);
+  --cta-glow: rgb(185 28 28 / 20%);
+  --cta-glow-hover: rgb(185 28 28 / 28%);
+  --poster-start: #e5e1da;
+  --poster-center: #faf9f6;
+  --poster-end: #e7d6d2;
 }
