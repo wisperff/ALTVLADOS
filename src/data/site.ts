@@ -67,12 +67,11 @@ export const site = {
         visual: '/images/hero-industrial.svg',
         visualAlt: 'Индустриальная сцена в кислотном лаймовом и розовом свете',
         visualLabel: 'Территория громкого звука',
-        visualIndex: '01 / SOUND ON',
         scroll: 'Листай. Дальше громче.',
         ticker: ['ГРОМКО', 'ГРЯЗНО', 'ЖИВОЙ ЗВУК', 'ALTZAVOD', 'БЕЗ ЦЕНЗУРЫ']
     },
     showsSection: {
-        eyebrow: '01 / Ближайшие события',
+        eyebrow: 'Ближайшие события',
         title: 'АФИША',
         mode: 'placeholder' as 'placeholder' | 'demo' | 'live',
         emptyLabel: 'ТИШИНА ПЕРЕД ШУМОМ',
@@ -144,31 +143,27 @@ export const site = {
         securityNote: 'Оплата и обработка данных — на стороне билетного оператора.',
     },
     venue: {
-        eyebrow: '02 / Своя территория',
+        eyebrow: 'Своя территория',
         title: 'СВОЙ ЗВУК.\nСВОИ ЛЮДИ.',
         description: 'Altzavod / Altfactory — независимая сцена в Твери. Без глянца и лишней дистанции: артисты, зал и музыка, ради которой собираются свои.',
         placeholderNote: 'Концепция пространства: звук, свет, бар и зоны ниже описаны как заглушки. Оснащение, вместимость и условия уточняются у команды перед мероприятием.',
         features: [
             {
-                number: '01',
                 title: 'Живой звук',
                 description: 'Первый рифф, последний аккорд — и всё, что пробирает между ними.',
                 icon: 'sound',
             },
             {
-                number: '02',
                 title: 'Свет и атмосфера',
                 description: 'Меньше глянца. Больше характера и своего света.',
                 icon: 'spark',
             },
             {
-                number: '03',
                 title: 'Место для своих',
                 description: 'Зал, бар и зоны общения — без лишнего пафоса.',
                 icon: 'people',
             },
             {
-                number: '04',
                 title: 'Твоя идея — здесь',
                 description: 'Гиг, фест или формат, которому пока нет названия.',
                 icon: 'arrowUpRight',
@@ -178,23 +173,23 @@ export const site = {
             {
                 src: '/images/venue-stage.svg',
                 alt: 'Тёмная SVG-визуализация сцены и световых лучей',
-                label: '01 / Сцена',
+                label: 'СЦЕНА',
             },
             {
                 src: '/images/venue-floor.svg',
                 alt: 'Тёмная SVG-визуализация индустриального зала',
-                label: '02 / Пространство',
+                label: 'ПРОСТРАНСТВО',
             },
             {
                 src: '/images/venue-light.svg',
                 alt: 'Тёмная SVG-визуализация концертного освещения',
-                label: '03 / Атмосфера',
+                label: 'АТМОСФЕРА',
             },
         ],
         galleryNote: 'Визуализации пространства. Настоящие фотографии появятся позже.',
     },
     contacts: {
-        eyebrow: '03 / Связь и детали',
+        eyebrow: 'Связь и детали',
         title: 'КОНТАКТЫ',
         telegram: {
             title: 'Вся движуха — в Telegram',

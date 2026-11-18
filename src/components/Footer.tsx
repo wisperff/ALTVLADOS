@@ -5,7 +5,7 @@ export function Footer() {
   const footer = site.footer;
   const offerUrl = footer.offer.href || site.tickets.offerUrl;
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" style={{ paddingBottom: 'var(--cookie-reserve, 0px)' }}>
       <div className="section-shell !py-10 sm:!py-14">
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-start">
           <div>
@@ -52,3 +52,4 @@ export function Footer() {
     </footer>
   );
 }
+

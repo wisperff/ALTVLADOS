@@ -21,9 +21,8 @@ export function VenueSection() {
 
       <div className="venue-features mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {venue.features.map((feature, index) => (
-          <Reveal key={feature.number} delay={index * 60} className="tonal-card venue-feature group p-6 sm:p-7">
+          <Reveal key={feature.title} delay={index * 60} className="tonal-card venue-feature group p-6 sm:p-7">
             <div className="flex items-center justify-between">
-              <span className="pill-tag font-mono text-subtle">/{feature.number}</span>
               <Icon name={feature.icon} className="h-7 w-7 text-accent-ink transition-transform duration-300 group-hover:-translate-y-1" />
             </div>
             <h3 className="mt-10 text-lg font-semibold tracking-tight">{feature.title}</h3>
@@ -46,3 +45,4 @@ export function VenueSection() {
     </section>
   );
 }
+

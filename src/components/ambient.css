@@ -1,9 +1,8 @@
 /* Static decoration is the default, including before hydration. */
 .ambient-stage { isolation: isolate; }
 .ambient-stage .hero-art-top,
-.ambient-stage .art-label,
-.ambient-stage .art-registration { z-index: 2; }
-.stage-decoration { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+.ambient-stage .art-label { z-index: 10; }
+.stage-decoration { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
 .stage-light {
   position: absolute; left: -12%; top: -15%; width: 62%; height: 130%;
   background: linear-gradient(90deg, transparent, #b8ff0018 48%, #ff1f7a28 50%, transparent 54%);
@@ -21,13 +20,6 @@
 .stage-scale i:nth-child(3n + 1) { width: 16px; background: #b8ff0080; }
 .stage-scale i:nth-child(3n) { background: #ff1f7a80; }
 
-/* A single pass on hover/focus; no pointer or scroll handlers. */
-.button-primary { position: relative; isolation: isolate; overflow: hidden; }
-.button-primary::before {
-  content: ''; position: absolute; inset: -30% auto -30% 0; width: 30%; z-index: -1;
-  background: linear-gradient(90deg, transparent, #ffffff65, transparent);
-  opacity: 0; transform: translate3d(-160%, 0, 0) skewX(-20deg);
-}
 .button-primary svg { transition: transform .22s ease; }
 
 @media (min-width: 768px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
@@ -37,9 +29,6 @@
   .ambient-stage[data-ambient='running'] .stage-signal i:nth-child(3) { animation-delay: -.3s; }
   .ambient-stage[data-ambient='running'] .stage-signal i:nth-child(4) { animation-delay: -1s; }
   .ambient-stage[data-ambient='running'] .stage-signal i:nth-child(5) { animation-delay: -.5s; }
-  .button-primary::before { transition: transform .65s ease, opacity .2s ease; }
-  .button-primary:hover::before,
-  .button-primary:focus-visible::before { opacity: .8; transform: translate3d(440%, 0, 0) skewX(-20deg); }
   .button-primary:hover svg,
   .button-primary:focus-visible svg { transform: translate(2px, -2px); }
 }
@@ -61,7 +50,7 @@
   .stage-signal { left: 17px; bottom: 59px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .stage-light, .stage-signal i { animation: none !important; }
-  .button-primary::before { display: none; }
+  .stage-light, .stage-signal i { animation: none; }
   .button-primary svg { transition: none; }
 }
+

@@ -11,7 +11,7 @@ body::after {
   content: '';
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
   opacity: .045;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath fill='%238a967b' d='M2 3h1v1H2zM16 9h2v1h-2zM38 2h1v2h-1zM61 7h1v1h-1zM75 19h2v1h-2zM6 29h1v2H6zM24 24h1v1h-1zM43 18h2v1h-2zM58 34h1v1h-1zM33 42h1v2h-1zM13 51h2v1h-2zM69 48h1v1h-1zM50 56h1v2h-1zM4 68h1v1H4zM22 72h2v1h-2zM39 65h1v1h-1zM63 75h2v1h-2zM76 62h1v2h-1z'/%3E%3C/svg%3E"),
@@ -20,7 +20,7 @@ body::after {
 }
 .eyebrow, .pill-tag, .contact-chip, .show-date, .show-price,
 .brand-wordmark small, .hero-meta, .hero-alias, .hero-city,
-.hero-art-top, .art-label, .art-registration, .status-label {
+.hero-art-top, .art-label, .status-label {
   font-family: var(--font-tech), monospace;
 }
 .brand-wordmark {
@@ -57,15 +57,6 @@ body::after {
   background: #0c100b;
   box-shadow: 0 20px 48px var(--elevation-shadow), 5px 5px 0 var(--punk-tint);
 }
-.hero-art-top > span {
-  padding: 9px 13px;
-  border-color: var(--punk);
-  background: var(--punk);
-  color: var(--on-punk);
-  font-weight: 800;
-  transform: rotate(-4deg);
-  box-shadow: 3px 3px 0 #060706;
-}
 .hero-city { border-color: var(--punk-border); }
 .section-title {
   font-size: clamp(28px, 3.8vw, 54px);
@@ -96,7 +87,6 @@ body::after {
 .show-orbit { border-color: rgb(184 255 0 / 20%); }
 .orbit-two { border-color: rgb(255 31 122 / 25%); transform: rotate(-18deg); }
 .wave-mark i:nth-child(3n) { background: var(--punk); }
-.show-visual-index { color: #98a290; font-family: var(--font-tech), monospace; }
 .show-placeholder-copy h3 {
   font-size: clamp(26px, 2.6vw, 38px);
   font-weight: 800;
@@ -122,15 +112,7 @@ body::after {
 .telegram-surface > div:first-child > svg:last-child { color: var(--punk-ink); }
 .telegram-cta { font-size: 14px; }
 .button { transition: transform .16s ease, opacity .16s ease; }
-.button-primary {
-  box-shadow: 3px 3px 0 var(--punk), 0 0 18px var(--cta-glow);
-}
-.button-primary:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0 var(--punk), 0 0 24px var(--cta-glow-hover);
-}
 .button:active { transform: scale(.97); }
-.button-ghost:hover { border-color: var(--punk-border); }
 .button-primary:disabled:hover { transform: none; }
 .tonal-card::before { box-shadow: inset 0 0 0 1px rgb(184 255 0 / 60%); }
 .ticket-dialog #ticket-title {
@@ -140,7 +122,6 @@ body::after {
   line-height: 1.2;
   overflow-wrap: anywhere;
 }
-.ticket-close:hover { color: var(--punk-ink); }
 .cookie-notice { backdrop-filter: none; -webkit-backdrop-filter: none; }
 .ticket-inset h3 { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 23px; }
 .site-footer a > .font-semibold { font-weight: 800; }
@@ -150,7 +131,7 @@ body::after {
   background: var(--accent);
   color: var(--on-accent);
 }
-.ticker-motion { display: flex; width: max-content; }
+.ticker-motion { display: flex; width: max-content; will-change: transform; animation: marquee 24s linear infinite; }
 .ticker-track { display: flex; flex-shrink: 0; align-items: center; justify-content: space-around; min-width: 100vw; gap: 30px; padding: 16px 15px; }
 .ticker-track > span {
   display: flex;
@@ -164,9 +145,9 @@ body::after {
   white-space: nowrap;
 }
 .ticker-star { color: var(--on-accent); font-size: 20px; }
-@keyframes punk-ticker { to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
-  .ticker-motion { animation: punk-ticker 36s linear infinite; }
+@keyframes marquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
 }
 @media (max-width: 1100px) {
   .brand-wordmark { font-size: 14px; }
@@ -188,7 +169,6 @@ body::after {
   .show-row .button { padding-inline: 12px; gap: 8px; font-size: 11px; }
   .ticker-track { gap: 20px; padding: 13px 10px; }
   .ticker-track > span { gap: 20px; font-size: 17px; }
-  .ticker-motion { transform: none; }
 }
 @media (max-width: 380px) {
   .brand { gap: 6px; }
@@ -202,7 +182,9 @@ body::after {
   .telegram-surface h3 { font-size: 19px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ticker-motion { animation: none !important; transform: none; }
+  .ticker-motion { animation-duration: 72s; }
+  .button { transition: opacity 120ms linear; }
   .button-primary:hover, .button:active, .punk-tag, .punk-sticker,
-  .hero-art-top > span, .hero-alias span { transform: none; }
+  .hero-alias span { transform: none; }
 }
+
