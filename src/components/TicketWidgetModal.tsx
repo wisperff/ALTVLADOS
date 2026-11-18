@@ -3,6 +3,7 @@
 import Script from "next/script";
 import { useLayoutEffect, useRef, useState } from "react";
 import { site, type Show } from "@/data/site";
+import { REDUCED_EXIT_MS, TICKET_EXIT_MS } from "@/lib/motion";
 import { lockBodyScroll } from "@/lib/scrollLock";
 
 type Props = {
@@ -13,7 +14,18 @@ type Props = {
   onExited: (revision: number) => void;
 };
 
-const CLOSE_DURATION = 150;
+const BACKDROP_MOVEMENT_LIMIT = 8;
+
+type BackdropGesture = {
+  pointerId: number;
+  x: number;
+  y: number;
+};
+
+function outsideDialog(dialog: HTMLDialogElement, x: number, y: number) {
+  const bounds = dialog.getBoundingClientRect();
+  return x < bounds.left || x > bounds.right || y < bounds.top || y > bounds.bottom;
+}
 
 function secureUrl(value?: string) {
   if (!value) return undefined;
@@ -27,6 +39,7 @@ function secureUrl(value?: string) {
 
 export default function TicketWidgetModal({ show, isOpen, revision, onClose, onExited }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const backdropGesture = useRef<BackdropGesture | null>(null);
   const [frameLoading, setFrameLoading] = useState(true);
   const copy = site.tickets;
   const embedUrl = secureUrl(show?.embedUrl || copy.embedUrl);
@@ -42,9 +55,37 @@ export default function TicketWidgetModal({ show, isOpen, revision, onClose, onE
     if (!dialog.open) dialog.showModal();
 
     return () => {
-      dialog.close();
       unlockScroll();
+      // Native close can restore focus too; thaw the saved page position first.
+      dialog.close();
       if (opener?.isConnected) opener.focus({ preventScroll: true });
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    const dialog = dialogRef.current;
+    const viewport = window.visualViewport;
+    if (!dialog || !viewport) return;
+    let frame: number | undefined;
+
+    const syncViewport = () => {
+      frame = undefined;
+      dialog.style.setProperty("--ticket-viewport-height", `${viewport.height}px`);
+      dialog.style.setProperty("--ticket-viewport-top", `${viewport.offsetTop}px`);
+    };
+    const scheduleViewport = () => {
+      if (frame === undefined) frame = window.requestAnimationFrame(syncViewport);
+    };
+
+    syncViewport();
+    viewport.addEventListener("resize", scheduleViewport);
+    viewport.addEventListener("scroll", scheduleViewport);
+    return () => {
+      viewport.removeEventListener("resize", scheduleViewport);
+      viewport.removeEventListener("scroll", scheduleViewport);
+      if (frame !== undefined) window.cancelAnimationFrame(frame);
+      dialog.style.removeProperty("--ticket-viewport-height");
+      dialog.style.removeProperty("--ticket-viewport-top");
     };
   }, []);
 
@@ -67,8 +108,10 @@ export default function TicketWidgetModal({ show, isOpen, revision, onClose, onE
         });
       }
     } else {
+      backdropGesture.current = null;
       dialog.dataset.state = "closing";
-      closeTimer = window.setTimeout(() => onExited(revision), CLOSE_DURATION);
+      const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? REDUCED_EXIT_MS : TICKET_EXIT_MS;
+      closeTimer = window.setTimeout(() => onExited(revision), duration);
     }
 
     return () => {
@@ -84,23 +127,39 @@ export default function TicketWidgetModal({ show, isOpen, revision, onClose, onE
       data-state="opening"
       aria-labelledby="ticket-title"
       aria-describedby="ticket-description"
-      className="ticket-dialog z-50 m-auto max-h-[90dvh] w-[calc(100%_-_2rem)] max-w-2xl overflow-y-auto p-0 text-bright"
+      className="ticket-dialog z-50 m-auto w-[calc(100%_-_2rem)] max-w-2xl p-0 text-bright"
       onCancel={(event) => { event.preventDefault(); onClose(); }}
-      onClick={(event) => {
-        if (event.target !== event.currentTarget) return;
-        const bounds = event.currentTarget.getBoundingClientRect();
-        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) onClose();
+      onPointerDown={(event) => {
+        backdropGesture.current = null;
+        if (event.target !== event.currentTarget || event.button !== 0 || event.isPrimary === false) return;
+        if (outsideDialog(event.currentTarget, event.clientX, event.clientY)) {
+          backdropGesture.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
+        }
       }}
+      onPointerMove={(event) => {
+        const gesture = backdropGesture.current;
+        if (gesture?.pointerId === event.pointerId && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > BACKDROP_MOVEMENT_LIMIT) {
+          backdropGesture.current = null;
+        }
+      }}
+      onPointerUp={(event) => {
+        const gesture = backdropGesture.current;
+        backdropGesture.current = null;
+        if (!gesture || gesture.pointerId !== event.pointerId || event.target !== event.currentTarget) return;
+        if (Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) <= BACKDROP_MOVEMENT_LIMIT && outsideDialog(event.currentTarget, event.clientX, event.clientY)) onClose();
+      }}
+      onPointerCancel={() => { backdropGesture.current = null; }}
     >
-      <div className="relative p-6 sm:p-9">
-        <button
-          type="button"
-          aria-label={copy.closeLabel}
-          onClick={onClose}
-          className="ticket-close absolute right-3 top-3 flex h-11 w-11 items-center justify-center sm:right-5 sm:top-5"
-        >
-          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5"><path d="m6 6 12 12M18 6 6 18" /></svg>
-        </button>
+      <button
+        type="button"
+        aria-label={copy.closeLabel}
+        onClick={onClose}
+        className="ticket-close absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center sm:right-5 sm:top-5"
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5"><path d="m6 6 12 12M18 6 6 18" /></svg>
+      </button>
+
+      <div className="ticket-scroll p-6 sm:p-9" tabIndex={0} role="region" aria-labelledby="ticket-title">
 
         <p className="pr-12 text-[10px] font-bold uppercase tracking-[0.2em] text-accent-ink">{demo ? copy.demoLabel : copy.provider}</p>
         <h2 id="ticket-title" className="mt-4 pr-10 text-3xl font-bold uppercase tracking-tight sm:text-4xl">{show?.title || copy.title}</h2>

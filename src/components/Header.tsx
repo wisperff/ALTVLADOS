@@ -1,18 +1,31 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
 import { site } from '@/data/site';
 import { lockBodyScroll } from '@/lib/scrollLock';
+import { getAnchorTarget, navigateToAnchor } from '@/lib/anchorNavigation';
+import { MENU_EXIT_MS, REDUCED_EXIT_MS } from '@/lib/motion';
 import { Icon } from './Icon';
 import { useTickets } from './TicketProvider';
 
+type MenuPhase = 'closed' | 'opening' | 'open' | 'closing';
+type CloseRequest = { restoreFocus?: boolean; afterExit?: () => void };
+
 export function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPhase, setMenuPhase] = useState<MenuPhase>('closed');
+  const menuMounted = menuPhase !== 'closed';
+  const menuExpanded = menuPhase === 'opening' || menuPhase === 'open';
   const [hidden, setHidden] = useState(false);
   const root = useRef<HTMLElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const hiddenRef = useRef(false);
   const menuOpenRef = useRef(false);
+  const phaseRef = useRef<MenuPhase>('closed');
+  const revision = useRef(0);
+  const enterFrame = useRef<number | null>(null);
+  const enterFinalFrame = useRef<number | null>(null);
+  const exitTimer = useRef<number | undefined>(undefined);
+  const pendingClose = useRef<CloseRequest | null>(null);
   const pinned = useRef(false);
   const menuUnlock = useRef<(() => void) | null>(null);
   const resetScroll = useRef<((pin: boolean) => void) | null>(null);
@@ -36,14 +49,107 @@ export function Header() {
     unlock?.();
   }, []);
 
-  const closeMenu = useCallback((restoreFocus = false) => {
-    menuOpenRef.current = false;
-    // Unlock before the browser follows an anchor in this click event.
+  const applyPhase = useCallback((next: MenuPhase) => {
+    phaseRef.current = next;
+    menuOpenRef.current = next !== 'closed';
+    setMenuPhase(next);
+  }, []);
+
+  const cancelMenuMotion = useCallback(() => {
+    if (enterFrame.current !== null) window.cancelAnimationFrame(enterFrame.current);
+    if (enterFinalFrame.current !== null) window.cancelAnimationFrame(enterFinalFrame.current);
+    window.clearTimeout(exitTimer.current);
+    enterFrame.current = null;
+    enterFinalFrame.current = null;
+    exitTimer.current = undefined;
+  }, []);
+
+  const finishClose = useCallback((version: number) => {
+    if (revision.current !== version || phaseRef.current !== 'closing') return;
+    exitTimer.current = undefined;
+    const request = pendingClose.current;
+    pendingClose.current = null;
+    // Fixed-body restoration must finish before native anchor/ticket actions.
     releaseMenuScroll();
-    setMenuOpen(false);
+    applyPhase('closed');
     revealHeader(true);
-    if (restoreFocus) toggle.current?.focus({ preventScroll: true });
-  }, [releaseMenuScroll, revealHeader]);
+    if (request?.afterExit) request.afterExit();
+    else if (request?.restoreFocus) toggle.current?.focus({ preventScroll: true });
+  }, [applyPhase, releaseMenuScroll, revealHeader]);
+
+  const closeMenu = useCallback((request: CloseRequest = {}) => {
+    if (phaseRef.current === 'closing') return;
+    if (phaseRef.current === 'closed') {
+      revealHeader(true);
+      request.afterExit?.();
+      return;
+    }
+    const version = ++revision.current;
+    cancelMenuMotion();
+    pendingClose.current = request;
+    applyPhase('closing');
+    revealHeader(true);
+    const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? REDUCED_EXIT_MS : MENU_EXIT_MS;
+    exitTimer.current = window.setTimeout(() => finishClose(version), delay);
+  }, [applyPhase, cancelMenuMotion, finishClose, revealHeader]);
+
+  const openMenu = useCallback(() => {
+    const previous = phaseRef.current;
+    if (previous === 'open' || previous === 'opening') return;
+    const version = ++revision.current;
+    cancelMenuMotion();
+    pendingClose.current = null;
+    revealHeader(true);
+    // Reverse an in-flight exit from its current composited position.
+    if (previous === 'closing') {
+      applyPhase('open');
+      return;
+    }
+    applyPhase('opening');
+    enterFrame.current = window.requestAnimationFrame(() => {
+      enterFrame.current = null;
+      if (revision.current !== version || phaseRef.current !== 'opening') return;
+      enterFinalFrame.current = window.requestAnimationFrame(() => {
+        enterFinalFrame.current = null;
+        if (revision.current === version && phaseRef.current === 'opening') applyPhase('open');
+      });
+    });
+  }, [applyPhase, cancelMenuMotion, revealHeader]);
+
+  const dismissImmediately = useCallback(() => {
+    revision.current++;
+    cancelMenuMotion();
+    pendingClose.current = null;
+    releaseMenuScroll();
+    applyPhase('closed');
+    revealHeader(true);
+  }, [applyPhase, cancelMenuMotion, releaseMenuScroll, revealHeader]);
+
+  const onAnchorClick = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (!menuOpenRef.current || !getAnchorTarget(href)) {
+      revealHeader(true);
+      return;
+    }
+    event.preventDefault();
+    closeMenu({ afterExit: () => { navigateToAnchor(href); } });
+  };
+
+  useLayoutEffect(() => {
+    if (!menuMounted) return;
+    menuUnlock.current = lockBodyScroll();
+    return releaseMenuScroll;
+  }, [menuMounted, releaseMenuScroll]);
+
+  useEffect(() => () => {
+    revision.current++;
+    cancelMenuMotion();
+    pendingClose.current = null;
+    phaseRef.current = 'closed';
+    menuOpenRef.current = false;
+    releaseMenuScroll();
+  }, [cancelMenuMotion, releaseMenuScroll]);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -123,14 +229,13 @@ export function Header() {
   }, [setHeaderHidden]);
 
   useEffect(() => {
-    if (!menuOpen) return;
-    menuUnlock.current = lockBodyScroll();
+    if (!menuMounted) return;
 
     const onKey = (event: KeyboardEvent) => {
       if (!menuOpenRef.current) return;
       if (event.key === 'Escape') {
         event.preventDefault();
-        closeMenu(true);
+        closeMenu({ restoreFocus: true });
         return;
       }
       if (event.key !== 'Tab') return;
@@ -153,32 +258,38 @@ export function Header() {
 
     const media = window.matchMedia('(min-width: 1024px)');
     const onResize = () => {
-      if (media.matches) closeMenu();
+      if (media.matches) dismissImmediately();
     };
-    const resizeFrame = window.requestAnimationFrame(onResize);
+    const resizeFrame = window.requestAnimationFrame(() => {
+      if (media.matches) dismissImmediately();
+    });
     document.addEventListener('keydown', onKey);
+    window.addEventListener('resize', onResize);
+    window.addEventListener('popstate', dismissImmediately);
     media.addEventListener('change', onResize);
 
     return () => {
-      releaseMenuScroll();
       window.cancelAnimationFrame(resizeFrame);
       document.removeEventListener('keydown', onKey);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('popstate', dismissImmediately);
       media.removeEventListener('change', onResize);
     };
-  }, [menuOpen, closeMenu, releaseMenuScroll]);
+  }, [menuMounted, closeMenu, dismissImmediately]);
 
   return (
     <>
-      {menuOpen && (
+      {menuMounted && (
         <button
           type="button"
           className="mobile-menu-backdrop"
+          data-state={menuPhase}
           tabIndex={-1}
           aria-label={site.ui.closeMenu}
           onClick={event => {
             event.preventDefault();
             event.stopPropagation();
-            closeMenu(true);
+            closeMenu({ restoreFocus: true });
           }}
         />
       )}
@@ -186,7 +297,7 @@ export function Header() {
         className="site-header"
         ref={root}
         data-hidden={hidden ? 'true' : 'false'}
-        data-menu-open={menuOpen ? 'true' : 'false'}
+        data-menu-open={menuMounted ? 'true' : 'false'}
         onFocusCapture={() => revealHeader()}
       >
         <div className="section-shell header-inner">
@@ -194,7 +305,7 @@ export function Header() {
             href="#top"
             className="brand"
             aria-label={site.ui.home}
-            onClick={() => closeMenu()}
+            onClick={event => onAnchorClick(event, '#top')}
           >
             <span className="brand-symbol" aria-hidden="true">
               <i /><i /><i />
@@ -206,7 +317,7 @@ export function Header() {
 
           <nav className="desktop-nav" aria-label={site.ui.navigationLabel}>
             {site.navigation.map(item => (
-              <a key={item.href} href={item.href} onClick={() => closeMenu()}>{item.label}</a>
+              <a key={item.href} href={item.href} onClick={() => revealHeader(true)}>{item.label}</a>
             ))}
           </nav>
 
@@ -214,10 +325,7 @@ export function Header() {
             <button
               type="button"
               className="button button-primary header-ticket"
-              onClick={() => {
-                closeMenu();
-                openTickets();
-              }}
+              onClick={() => closeMenu({ afterExit: openTickets })}
             >
               {site.ui.tickets}<Icon name="arrowUpRight" />
             </button>
@@ -226,40 +334,40 @@ export function Header() {
               type="button"
               ref={toggle}
               className="menu-toggle"
-              aria-label={menuOpen ? site.ui.closeMenu : site.ui.menu}
-              aria-expanded={menuOpen}
+              aria-label={menuExpanded ? site.ui.closeMenu : site.ui.menu}
+              aria-expanded={menuExpanded}
               aria-controls="mobile-navigation"
               onClick={() => {
-                if (menuOpenRef.current) closeMenu(true);
-                else {
-                  menuOpenRef.current = true;
-                  revealHeader(true);
-                  setMenuOpen(true);
-                }
+                if (phaseRef.current === 'open' || phaseRef.current === 'opening') closeMenu({ restoreFocus: true });
+                else openMenu();
               }}
             >
-              <Icon name={menuOpen ? 'close' : 'menu'} />
+              <Icon name={menuExpanded ? 'close' : 'menu'} />
             </button>
           </div>
         </div>
 
-        {menuOpen && (
-          <nav
-            id="mobile-navigation"
-            className="mobile-nav section-shell"
-            aria-label={site.ui.navigationLabel}
-          >
-            {site.navigation.map(item => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={() => closeMenu()}
-              >
-                {item.label}
-                <Icon name="arrowUpRight" />
-              </a>
-            ))}
-          </nav>
+        {menuMounted && (
+          <div className="mobile-menu-panel" data-state={menuPhase}>
+            <nav
+              id="mobile-navigation"
+              className="mobile-nav section-shell"
+              data-state={menuPhase}
+              aria-label={site.ui.navigationLabel}
+            >
+              {site.navigation.map((item, index) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  style={{ '--menu-index': index } as CSSProperties}
+                  onClick={event => onAnchorClick(event, item.href)}
+                >
+                  {item.label}
+                  <Icon name="arrowUpRight" />
+                </a>
+              ))}
+            </nav>
+          </div>
         )}
       </header>
     </>
