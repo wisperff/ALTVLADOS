@@ -1,13 +1,19 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { site, type Show } from "@/data/site";
+import { lockBodyScroll } from "@/lib/scrollLock";
 
 type Props = {
   show?: Show;
+  isOpen: boolean;
+  revision: number;
   onClose: () => void;
+  onExited: (revision: number) => void;
 };
+
+const CLOSE_DURATION = 150;
 
 function secureUrl(value?: string) {
   if (!value) return undefined;
@@ -19,7 +25,7 @@ function secureUrl(value?: string) {
   }
 }
 
-export default function TicketWidgetModal({ show, onClose }: Props) {
+export default function TicketWidgetModal({ show, isOpen, revision, onClose, onExited }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [frameLoading, setFrameLoading] = useState(true);
   const copy = site.tickets;
@@ -28,28 +34,63 @@ export default function TicketWidgetModal({ show, onClose }: Props) {
   const offerUrl = secureUrl(copy.offerUrl);
   const demo = copy.provider === "demo" || (site.showsSection.mode === 'demo' && !!show);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const dialog = dialogRef.current;
+    if (!dialog) return;
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const previousOverflow = document.body.style.overflow;
-    if (!dialog?.open) dialog?.showModal();
-    document.body.style.overflow = "hidden";
+    const unlockScroll = lockBodyScroll();
+    if (!dialog.open) dialog.showModal();
 
     return () => {
-      dialog?.close();
-      document.body.style.overflow = previousOverflow;
+      dialog.close();
+      unlockScroll();
       if (opener?.isConnected) opener.focus({ preventScroll: true });
     };
   }, []);
 
+  useLayoutEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    let firstFrame: number | undefined;
+    let secondFrame: number | undefined;
+    let closeTimer: number | undefined;
+
+    if (isOpen) {
+      if (dialog.dataset.state === "closing" || dialog.dataset.state === "open") {
+        // Reopening keeps the same native dialog, focus and scroll lock.
+        dialog.dataset.state = "open";
+      } else {
+        dialog.dataset.state = "opening";
+        // Let the initial opacity/transform paint before starting the entrance.
+        firstFrame = window.requestAnimationFrame(() => {
+          secondFrame = window.requestAnimationFrame(() => { dialog.dataset.state = "open"; });
+        });
+      }
+    } else {
+      dialog.dataset.state = "closing";
+      closeTimer = window.setTimeout(() => onExited(revision), CLOSE_DURATION);
+    }
+
+    return () => {
+      if (firstFrame !== undefined) window.cancelAnimationFrame(firstFrame);
+      if (secondFrame !== undefined) window.cancelAnimationFrame(secondFrame);
+      if (closeTimer !== undefined) window.clearTimeout(closeTimer);
+    };
+  }, [isOpen, revision, onExited]);
+
   return (
     <dialog
       ref={dialogRef}
+      data-state="opening"
       aria-labelledby="ticket-title"
       aria-describedby="ticket-description"
-      className="ticket-dialog glass-surface m-auto max-h-[90dvh] w-[calc(100%_-_2rem)] max-w-2xl overflow-y-auto p-0 text-bright backdrop:bg-dialog-backdrop"
+      className="ticket-dialog z-50 m-auto max-h-[90dvh] w-[calc(100%_-_2rem)] max-w-2xl overflow-y-auto p-0 text-bright"
       onCancel={(event) => { event.preventDefault(); onClose(); }}
-      onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}
+      onClick={(event) => {
+        if (event.target !== event.currentTarget) return;
+        const bounds = event.currentTarget.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) onClose();
+      }}
     >
       <div className="relative p-6 sm:p-9">
         <button
@@ -106,3 +147,4 @@ export default function TicketWidgetModal({ show, onClose }: Props) {
     </dialog>
   );
 }
+

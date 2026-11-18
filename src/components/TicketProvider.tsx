@@ -1,19 +1,16 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import {
   createContext,
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
 import type { Show } from "@/data/site";
-
-const TicketWidgetModal = dynamic(() => import("./TicketWidgetModal"), {
-  ssr: false,
-});
+import TicketWidgetModal from "./TicketWidgetModal";
 
 type TicketContextValue = {
   openTickets: (show?: Show) => void;
@@ -21,23 +18,40 @@ type TicketContextValue = {
 
 const TicketContext = createContext<TicketContextValue | null>(null);
 
+type TicketState = {
+  show?: Show;
+  isOpen: boolean;
+  revision: number;
+};
+
 export function TicketProvider({ children }: { children: ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedShow, setSelectedShow] = useState<Show>();
+  const [ticket, setTicket] = useState<TicketState | null>(null);
+  const revision = useRef(0);
 
   const openTickets = useCallback((show?: Show) => {
-    setSelectedShow(show);
-    setIsOpen(true);
+    revision.current += 1;
+    setTicket({ show, isOpen: true, revision: revision.current });
   }, []);
 
-  const closeTickets = useCallback(() => setIsOpen(false), []);
+  const closeTickets = useCallback(() => {
+    setTicket((current) => current?.isOpen ? { ...current, isOpen: false } : current);
+  }, []);
+  const finishClosing = useCallback((closedRevision: number) => {
+    setTicket((current) => current && !current.isOpen && current.revision === closedRevision ? null : current);
+  }, []);
   const value = useMemo(() => ({ openTickets }), [openTickets]);
 
   return (
     <TicketContext.Provider value={value}>
       {children}
-      {isOpen && (
-        <TicketWidgetModal show={selectedShow} onClose={closeTickets} />
+      {ticket && (
+        <TicketWidgetModal
+          show={ticket.show}
+          isOpen={ticket.isOpen}
+          revision={ticket.revision}
+          onClose={closeTickets}
+          onExited={finishClosing}
+        />
       )}
     </TicketContext.Provider>
   );
@@ -48,3 +62,4 @@ export function useTickets() {
   if (!context) throw new Error("useTickets must be used within TicketProvider");
   return context;
 }
+
