@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { site } from "@/data/site";
+import { PrivacyLink } from "./PrivacyLink";
 
 function subscribeToStorage(listener: () => void) {
   window.addEventListener("storage", listener);
@@ -67,13 +68,13 @@ export function CookieBanner() {
     <aside
       ref={banner}
       aria-labelledby="cookie-title"
-      className="cookie-notice fixed z-30 flex flex-col gap-3 p-3.5 text-xs sm:p-5"
+      className="cookie-notice fixed z-30 flex flex-col gap-2.5 p-3.5 text-xs"
     >
       <div className="max-w-xl">
         <p id="cookie-title" className="text-xs font-semibold text-bright">{copy.title}</p>
         <p className="cookie-description text-xs leading-relaxed text-ui-muted">
           {copy.description}{" "}
-          <a className="text-ui-link underline underline-offset-4 hover:text-bright" href={site.footer.privacy.href || '#privacy'}>{copy.policyLabel}</a>
+          <PrivacyLink className="text-ui-link underline underline-offset-4 hover:text-bright">{copy.policyLabel}</PrivacyLink>
         </p>
       </div>
       <div className="cookie-actions grid w-full min-w-0 shrink-0 grid-cols-2 gap-2">

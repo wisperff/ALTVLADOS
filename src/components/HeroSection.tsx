@@ -10,7 +10,7 @@ export function HeroSection() {
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="section-shell hero-shell">
-        <div className="hero-meta"><span className="eyebrow"><span className="status-dot" />{site.hero.eyebrow}</span><span>{site.hero.city}<span className="hero-cross" aria-hidden="true"> + </span></span></div>
+        <div className="hero-meta"><span className="eyebrow"><span className="status-dot" />{site.hero.eyebrow}</span></div>
         <div className="hero-grid">
           <div className="hero-copy">
             <p className="hero-alias">{site.alias}<span aria-hidden="true"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" focusable="false"><path d="M10 2v16M2 10h16M4.35 4.35l11.3 11.3M4.35 15.65l11.3-11.3" /></svg></span></p>
