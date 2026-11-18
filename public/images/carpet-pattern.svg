@@ -1,57 +1,83 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="384" height="384" viewBox="0 0 384 384" fill="none">
-  <title>Геометрический ковровый орнамент</title>
-  <desc>Авторский бесшовный узор в бордовых, угольных и приглушённых бежевых тонах. Восьмигранные медальоны, ромбы и мелкий тканый орнамент.</desc>
+  <title>Тканый цветочный орнамент</title>
+  <desc>Авторская стилизация традиционного настенного ковра: приглушённое кирпичное поле, широкая охристо-бежевая кайма, мелкие розетки, листья и вьющиеся стебли.</desc>
   <defs>
-    <pattern id="weave" width="8" height="8" patternUnits="userSpaceOnUse">
-      <path d="M0 1h8M0 5h8" stroke="#120d0e" stroke-opacity=".18"/>
-      <path d="M1 0v8M5 0v8" stroke="#c7b8a1" stroke-opacity=".035"/>
+    <g id="petal">
+      <ellipse cx="0" cy="-8" rx="3.5" ry="7" fill="#8a4033" stroke="#514332" stroke-width=".75"/>
+    </g>
+    <g id="rose">
+      <use href="#petal"/>
+      <use href="#petal" transform="rotate(45)"/>
+      <use href="#petal" transform="rotate(90)"/>
+      <use href="#petal" transform="rotate(135)"/>
+      <use href="#petal" transform="rotate(180)"/>
+      <use href="#petal" transform="rotate(225)"/>
+      <use href="#petal" transform="rotate(270)"/>
+      <use href="#petal" transform="rotate(315)"/>
+      <circle r="5" fill="#b79a68" stroke="#382921" stroke-width="1"/>
+      <circle r="1.75" fill="#71332a"/>
+    </g>
+    <g id="leaf">
+      <path d="M0 0C-2-7 0-12 7-16 9-8 6-2 0 0Z" fill="#b79a68" stroke="#514332" stroke-width=".8"/>
+      <path d="M1-2 6-13" stroke="#71332a" stroke-width=".7"/>
+    </g>
+    <pattern id="border-flora" x="2" y="22" width="76" height="38" patternUnits="userSpaceOnUse">
+      <path d="M0 18C12 5 24 7 38 18S63 31 76 18" stroke="#514332" stroke-width="1.7"/>
+      <path d="M0 18C10 27 19 28 27 24M49 12C58 8 66 9 76 18" stroke="#8a4033" stroke-width="1"/>
+      <path d="M10 11C10 3 18 3 23 6 19 12 14 14 10 11ZM61 25C61 33 69 34 73 30 70 25 65 23 61 25Z" fill="#8a4033" stroke="#514332" stroke-width=".7"/>
+      <path d="M6 18C3 13 1 12 0 12M29 22C25 31 20 32 17 31M49 14C52 6 57 4 61 5" stroke="#514332" stroke-width="1.1"/>
+      <use href="#rose" x="38" y="18"/>
     </pattern>
-    <pattern id="border" y="84" width="48" height="24" patternUnits="userSpaceOnUse">
-      <path d="M0 0h48v24H0z" fill="#120d0e"/>
-      <path d="M0 2h48M0 22h48" stroke="#8c8278"/>
-      <path d="m12 5 7 7-7 7-7-7Zm24 0 7 7-7 7-7-7Z" fill="#c7b8a1"/>
-      <path d="m12 9 3 3-3 3-3-3Zm24 0 3 3-3 3-3-3Z" fill="#8f1920"/>
-      <path d="M0 12h5m14 0h10m14 0h5" stroke="#8c8278"/>
+    <pattern id="field-flora" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M0 24C12 7 36 7 48 24M0 24C12 41 36 41 48 24M24 0C7 12 7 36 24 48M24 0C41 12 41 36 24 48" stroke="#514332" stroke-width=".8" stroke-opacity=".7"/>
+      <path d="M6 15C3 9 6 5 12 5 12 11 10 14 6 15ZM33 42C39 45 43 42 43 36 37 36 34 38 33 42Z" fill="#9b5340" stroke="#382921" stroke-width=".6"/>
+      <path d="M15 5C20 4 23 7 23 12 17 12 15 9 15 5ZM25 36C25 41 28 44 33 43 33 38 31 36 25 36Z" fill="#b79a68" fill-opacity=".65"/>
+      <g transform="translate(24 24) scale(.32)"><use href="#rose"/></g>
+      <path d="m0 0 3 3-3 3m48-6-3 3 3 3M0 48l3-3-3-3m48 6-3-3 3-3" stroke="#b79a68" stroke-width=".7" stroke-opacity=".5"/>
     </pattern>
-    <g id="bands">
-      <path d="M0 82h384v28H0zM0 274h384v28H0z" fill="#8f1920"/>
-      <path d="M0 84h384v24H0zM0 276h384v24H0z" fill="url(#border)"/>
+    <pattern id="guard" width="12" height="12" patternUnits="userSpaceOnUse">
+      <path d="m0 6 3-3 3 3 3-3 3 3M0 10l3-3 3 3 3-3 3 3" stroke="#b79a68" stroke-width=".8"/>
+    </pattern>
+    <pattern id="weave" width="4" height="4" patternUnits="userSpaceOnUse">
+      <path d="M0 1h4" stroke="#382921" stroke-opacity=".12" stroke-width=".55"/>
+      <path d="M1 0v4" stroke="#bfae8a" stroke-opacity=".045" stroke-width=".45"/>
+    </pattern>
+    <g id="palmette">
+      <path d="M0-36C6-31 8-27 16-27L15-20C27-19 26-7 35 0 26 7 27 19 15 20L16 27C8 27 6 31 0 36-6 31-8 27-16 27L-15 20C-27 19-26 7-35 0-26-7-27-19-15-20L-16-27C-8-27-6-31 0-36Z" fill="#b79a68" stroke="#382921" stroke-width="1.5"/>
+      <path d="M0-27C7-22 8-17 17-17 17-9 21-5 27 0 21 5 17 9 17 17 8 17 7 22 0 27-7 22-8 17-17 17-17 9-21 5-27 0-21-5-17-9-17-17-8-17-7-22 0-27Z" fill="#9b5340" stroke="#514332" stroke-width="1.3"/>
+      <path d="M0-22V22M-22 0H22M-15-15 15 15m-30 0 30-30" stroke="#b79a68" stroke-width=".9"/>
+      <g transform="scale(.8)"><use href="#rose"/></g>
+      <path d="M0-36V-45m0 81v9M-35 0h-8m78 0h8" stroke="#bfae8a" stroke-width="1"/>
+      <path d="M-2-43C-9-42-13-46-14-51-7-51-3-48-2-43Zm4 86C9 42 13 46 14 51 7 51 3 48 2 43Z" fill="#b79a68" stroke="#514332" stroke-width=".7"/>
     </g>
-    <g id="flower">
-      <path d="M-7-20H7v13h13V7H7v13H-7V7h-13V-7h13Z" fill="#120d0e" stroke="#8c8278" stroke-width="2"/>
-      <path d="m0-12 12 12L0 12-12 0Z" fill="#c7b8a1"/>
-      <path d="m0-5 5 5-5 5-5-5Z" fill="#8f1920"/>
-    </g>
-    <g id="medallion">
-      <path d="M-34-82h68l48 48v68L34 82h-68l-48-48v-68Z" fill="#120d0e" stroke="#8c8278" stroke-width="4"/>
-      <path d="M-29-70h58l41 41v58L29 70h-58l-41-41v-58Z" fill="#c7b8a1"/>
-      <path d="M-24-60h48l36 36v48L24 60h-48l-36-36v-48Z" fill="#8f1920" stroke="#120d0e" stroke-width="3"/>
-      <path d="m0-54 16 20 25-7-7 25L54 0 34 16l7 25-25-7L0 54l-16-20-25 7 7-25L-54 0l20-16-7-25 25 7Z" fill="#120d0e"/>
-      <path d="m0-37 11 16 18-8-8 18L37 0 21 11l8 18-18-8L0 37l-11-16-18 8 8-18L-37 0l16-11-8-18 18 8Z" fill="#c7b8a1"/>
-      <path d="m0-20 20 20L0 20-20 0Z" fill="#6b1116" stroke="#120d0e" stroke-width="3"/>
-      <path d="m0-8 8 8-8 8-8-8Z" fill="#8c8278"/>
-      <path d="M-46-46h8m-4-4v8m80-4h8m-4-4v8m-88 84h8m-4-4v8m80-4h8m-4-4v8" stroke="#c7b8a1" stroke-width="2"/>
-    </g>
-    <g id="corner">
-      <path d="M-22-52h44l30 30v44L22 52h-44l-30-30v-44Z" fill="#120d0e" stroke="#8c8278" stroke-width="3"/>
-      <path d="m0-40 13 17 20-10-10 20L40 0 23 13l10 20-20-10L0 40l-13-17-20 10 10-20L-40 0l17-13-10-20 20 10Z" fill="#8f1920"/>
-      <path d="m0-25 25 25L0 25-25 0Z" fill="#c7b8a1"/>
-      <path d="m0-14 14 14L0 14-14 0Z" fill="#6b1116"/>
-      <path d="M-5-5H5V5H-5Z" fill="#8c8278"/>
+    <g id="edge-flora">
+      <path d="M22 22h340v38H22zM22 324h340v38H22z" fill="url(#border-flora)"/>
     </g>
   </defs>
-  <path d="M0 0h384v384H0z" fill="#6b1116"/>
-  <use href="#bands"/>
-  <use href="#bands" transform="rotate(90 192 192)"/>
-  <use href="#medallion" x="192" y="192"/>
-  <use href="#corner" x="0" y="0"/>
-  <use href="#corner" x="384" y="0"/>
-  <use href="#corner" x="0" y="384"/>
-  <use href="#corner" x="384" y="384"/>
-  <use href="#flower" x="48" y="192"/>
-  <use href="#flower" x="336" y="192"/>
-  <use href="#flower" x="192" y="48"/>
-  <use href="#flower" x="192" y="336"/>
-  <path d="m48 32 16 16-16 16-16-16Zm288 0 16 16-16 16-16-16ZM48 320l16 16-16 16-16-16Zm288 0 16 16-16 16-16-16Z" fill="#8f1920" stroke="#8c8278" stroke-width="2"/>
+  <path d="M0 0h384v384H0z" fill="#71332a"/>
+  <path d="M6 6h372v372H6z" fill="#382921"/>
+  <path d="M9 9h366v366H9z" fill="#b79a68"/>
+  <path d="M14 14h356v356H14z" fill="#71332a"/>
+  <path d="M14 14h356v356H14z" fill="url(#guard)"/>
+  <path d="M22 22h340v340H22z" fill="#b79a68" stroke="#514332" stroke-width="2"/>
+  <path d="M25 25h334v334H25z" stroke="#bfae8a" stroke-width="1"/>
+  <use href="#edge-flora"/>
+  <use href="#edge-flora" transform="rotate(90 192 192)"/>
+  <path d="M60 60h264v264H60z" fill="#382921"/>
+  <path d="M63 63h258v258H63z" fill="#b79a68"/>
+  <path d="M67 67h250v250H67z" fill="#8a4033"/>
+  <path d="M71 71h242v242H71z" fill="#71332a" stroke="#514332" stroke-width="1"/>
+  <path d="M71 71h242v242H71z" fill="url(#field-flora)"/>
+  <path d="M192 70C167 94 217 122 192 151S166 205 192 233 217 288 192 314" stroke="#b79a68" stroke-width="1.3" stroke-opacity=".8"/>
+  <use href="#palmette" x="192" y="110"/>
+  <use href="#palmette" x="192" y="192" transform="rotate(90 192 192)"/>
+  <use href="#palmette" x="192" y="274"/>
+  <use href="#leaf" x="115" y="108" transform="rotate(-18 115 108)"/>
+  <use href="#leaf" x="269" y="108" transform="rotate(18 269 108)"/>
+  <use href="#leaf" x="115" y="198" transform="rotate(22 115 198)"/>
+  <use href="#leaf" x="269" y="198" transform="rotate(-22 269 198)"/>
+  <use href="#leaf" x="115" y="287" transform="rotate(-12 115 287)"/>
+  <use href="#leaf" x="269" y="287" transform="rotate(12 269 287)"/>
+  <path d="M77 91c13 5 19-6 29-5m153 197c15-6 29 3 48-4M83 202c23 5 47-3 60-1m81-62c16-4 29 3 49-1" stroke="#bfae8a" stroke-opacity=".09" stroke-width="2"/>
   <path d="M0 0h384v384H0z" fill="url(#weave)"/>
 </svg>
