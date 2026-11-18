@@ -1,43 +1,48 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="1100" viewBox="0 0 900 1100" fill="none">
-  <title>Индустриальная сцена Altzavod</title>
-  <desc>Авторская визуализация: графитовая сцена, красные рельефные панели, серые и белые акустические треугольники.</desc>
+  <title>Altzavod — звук под своим знаком</title>
+  <desc>Красная буква А, треугольная колонка с всевидящим глазом и басовым динамиком. Стальные грани, трафаретные лучи и фактура заводской стены.</desc>
   <defs>
-    <linearGradient id="bg" x1="450" y1="0" x2="450" y2="1100" gradientUnits="userSpaceOnUse"><stop stop-color="#191919"/><stop offset=".6" stop-color="#070707"/><stop offset="1" stop-color="#0f0f0f"/></linearGradient>
-    <linearGradient id="steel" x1="191" y1="290" x2="710" y2="880" gradientUnits="userSpaceOnUse"><stop stop-color="#6a6a6a"/><stop offset=".17" stop-color="#272727"/><stop offset=".5" stop-color="#121212"/><stop offset=".81" stop-color="#373737"/><stop offset="1" stop-color="#121212"/></linearGradient>
-    <linearGradient id="side" x1="220" y1="450" x2="700" y2="800"><stop stop-color="#141414"/><stop offset="1" stop-color="#3a3a3a"/></linearGradient>
-    <linearGradient id="beam" x1="180" y1="100" x2="700" y2="1000" gradientUnits="userSpaceOnUse"><stop stop-color="#dc2626" stop-opacity=".28"/><stop offset=".7" stop-color="#dc2626" stop-opacity=".04"/><stop offset="1" stop-color="#dc2626" stop-opacity="0"/></linearGradient>
-    <linearGradient id="red-light" x1="662" y1="160" x2="450" y2="990" gradientUnits="userSpaceOnUse"><stop stop-color="#991b1b" stop-opacity=".33"/><stop offset="1" stop-color="#991b1b" stop-opacity="0"/></linearGradient>
-    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(530 610) rotate(90) scale(570 450)" gradientUnits="userSpaceOnUse"><stop stop-color="#991b1b" stop-opacity=".12"/><stop offset="1" stop-color="#991b1b" stop-opacity="0"/></radialGradient>
-    <linearGradient id="floor" x1="450" y1="800" x2="450" y2="1100" gradientUnits="userSpaceOnUse"><stop stop-color="#dc2626" stop-opacity=".07"/><stop offset="1" stop-color="#dc2626" stop-opacity="0"/></linearGradient>
-    <pattern id="grid" width="45" height="45" patternUnits="userSpaceOnUse"><path d="M45 0H0V45" stroke="#cfcfcf" stroke-opacity=".045"/></pattern>
-    <pattern id="relief" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M20 0 40 20 20 40 0 20Z" fill="#7f1d1d"/><path d="m20 0 20 20H20Z" fill="#dc2626"/><path d="M0 20h20v20Z" fill="#450a0a"/></pattern>
+    <linearGradient id="wall" x1="0" y1="0" x2="900" y2="1100" gradientUnits="userSpaceOnUse"><stop stop-color="#252529"/><stop offset=".45" stop-color="#111114"/><stop offset="1" stop-color="#09090b"/></linearGradient>
+    <radialGradient id="red-haze" cx="0" cy="0" r="1" gradientTransform="translate(680 555) rotate(140) scale(600 470)" gradientUnits="userSpaceOnUse"><stop stop-color="#991b1b" stop-opacity=".3"/><stop offset="1" stop-color="#991b1b" stop-opacity="0"/></radialGradient>
+    <linearGradient id="steel" x1="155" y1="31" x2="230" y2="206" gradientUnits="userSpaceOnUse"><stop stop-color="#a1a1aa"/><stop offset=".5" stop-color="#52525b"/><stop offset="1" stop-color="#303036"/></linearGradient>
+    <pattern id="wall-grid" width="90" height="90" patternUnits="userSpaceOnUse"><path d="M90 0H0v90" stroke="#f4f4f5" stroke-opacity=".035"/></pattern>
+    <pattern id="stencil-grain" width="108" height="92" patternUnits="userSpaceOnUse"><path d="m9 19 3-1m37 3 6-1m28 20 2-3M19 70l4-1m49 12 5-1M90 8h2M39 49h2" stroke="#f4f4f5" stroke-opacity=".11" stroke-width="1.4"/><path d="m12 42 13-1m27 35 10-1m23-20 10-1" stroke="#09090b" stroke-opacity=".5" stroke-width="2"/></pattern>
+    <pattern id="relief" width="52" height="52" patternUnits="userSpaceOnUse"><path d="m26 0 26 26-26 26L0 26Z" fill="#6e1419"/><path d="m26 0 26 26H26Z" fill="#991b1b"/><path d="M0 26h26v26Z" fill="#3b1014"/></pattern>
   </defs>
-  <path fill="url(#bg)" d="M0 0h900v1100H0z"/>
-  <path fill="url(#grid)" d="M0 0h900v1100H0z"/>
-  <path fill="url(#glow)" d="M0 0h900v1100H0z"/>
-  <g stroke="#686868" stroke-opacity=".24">
-    <path d="M0 120 450 280 900 120M0 270l450 100 450-100M0 450l450 35 450-35M0 900l450-180 450 180M0 1050l450-330 450 330M70 0l260 720M830 0 570 720M0 760h900"/>
-    <path d="M0 0 270 720m630-720L630 720M70 0v950M830 0v950M160 0v885M740 0v885M0 122h900M0 274h900"/>
+  <path fill="url(#wall)" d="M0 0h900v1100H0Z"/>
+  <path fill="url(#wall-grid)" d="M0 0h900v1100H0Z"/>
+  <path fill="url(#red-haze)" d="M0 0h900v1100H0Z"/>
+  <g stroke="#d4d4d8" stroke-opacity=".13">
+    <path d="M450 105 835 941H65Zm0 31 365 790H85Z"/>
+    <path d="m450 482-128-339m128 339 5-382m-5 382 142-339m-142 339 267-257m-267 257 344-137m-344 137 391 5m-391-5L113 333m337 149L69 500m381-18L119 659m331-177L234 820m216-338 253 288"/>
   </g>
-  <g stroke="#0a0a0a" stroke-width="22"><path d="M0 220 900 0M0 300 900 80M60 0v980M840 0v980"/></g>
-  <g stroke="#414141" stroke-width="2"><path d="M0 210 900-10M0 289 900 69M73 0v970M827 0v970"/></g>
-  <g opacity=".85"><path d="M38 332h118v150H38zM748 320h114v162H748z" fill="url(#relief)"/><path d="m48 337 96 18-78 109Z" fill="#d4d4d4"/><path d="m48 337 18 127-28-76Z" fill="#5a5a5a"/><path d="m770 333 78 100-91 35Z" fill="#ededed"/><path d="m770 333-13 135-16-84Z" fill="#575757"/></g>
-  <g fill="#0c0c0c" stroke="#373737"><path d="M102 482h98v358h-98z"/><path d="M707 482h92v358h-92z"/></g>
-  <g stroke="#525252" stroke-opacity=".4"><path d="M114 501h74v144h-74zM114 659h74v164h-74zM719 501h68v144h-68zM719 659h68v164h-68z"/><circle cx="151" cy="575" r="29"/><circle cx="151" cy="739" r="32"/><circle cx="753" cy="575" r="27"/><circle cx="753" cy="739" r="30"/></g>
-  <path d="m120 150 80-35 660 850-710 85Z" fill="url(#beam)"/>
-  <path d="m120 150 80-35 7 9-80 35Z" fill="#dc2626"/>
-  <path d="m662 167 37 15-163 744-205-36Z" fill="url(#red-light)" opacity=".6"/>
-  <path d="m651 156 61 24-4 11-61-24Z" fill="#991b1b"/>
-  <path d="M204 816h503l109 132H95z" fill="#161616" stroke="#484848"/>
-  <path d="M95 948h721v28H95z" fill="#0d0d0d" stroke="#383838"/>
-  <path d="M146 949h617" stroke="#dc2626" stroke-opacity=".65"/>
-  <path d="m331 309 61-36h178l172 543-61 33-97-242H434L323 849l-72-33Z" fill="url(#side)" stroke="#575757"/>
-  <path d="M331 309h178l172 540H540l-28-104H367l-32 104H195Zm71 326h78l-37-167Z" fill="url(#steel)" fill-rule="evenodd" stroke="#777777" stroke-width="1.5"/>
-  <path d="m509 309 61-36 172 543-61 33-172-540Z" fill="#232323" stroke="#787878"/>
-  <path d="M331 309h178l61-36H392l-61 36Z" fill="#6e6e6e" stroke="#929292"/>
-  <path d="m331 309-136 540m314-540 172 540" stroke="#dc2626" stroke-width="3"/>
-  <path d="M367 745h145m-110-110 41-167 37 167" stroke="#991b1b" stroke-opacity=".55"/>
-  <path d="m195 979 140 0 45 121H63Zm345 0h141l146 121H579Z" fill="url(#floor)"/>
-  <g stroke="#9a9a9a" stroke-opacity=".1"><path d="m450 976-98 124m98-124 98 124m-294-124-226 124m618-124 226 124M0 1010h900M0 1061h900"/></g>
-  <g fill="#c5c5c5" fill-opacity=".4"><circle cx="262" cy="270" r="1.5"/><circle cx="614" cy="339" r="1"/><circle cx="675" cy="467" r="1.5"/><circle cx="289" cy="557" r="1"/><circle cx="381" cy="201" r="1"/><circle cx="569" cy="889" r="1.5"/><circle cx="199" cy="412" r="1"/><circle cx="768" cy="300" r="1"/></g>
+  <path d="m34 163 106 22-65 121Z" fill="#d4d4d8" opacity=".18"/>
+  <path d="m34 163 41 143-52-55Z" fill="#a1a1aa" opacity=".2"/>
+  <path d="M755 90h108v196H755Z" fill="url(#relief)" opacity=".65"/>
+  <path d="m766 108 82 113-91 30Z" fill="#d4d4d8" opacity=".65"/>
+  <path d="m766 108-9 143-20-76Z" fill="#52525b"/>
+  <path d="M38 933h824M52 951h796" stroke="#d4d4d8" stroke-opacity=".22"/>
+  <path d="M0 976h900v124H0Z" fill="#09090b" opacity=".5"/>
+  <path d="m216 976-88 124m347-124 12 124m201-124 113 124M0 1031h900" stroke="#d4d4d8" stroke-opacity=".08"/>
+  <g transform="translate(96 239) scale(2.95)">
+    <path d="m155 31 27 14 48 161h-23Z" fill="url(#steel)"/>
+    <path d="m155 31 52 175H75Z" fill="#09090b"/>
+    <path d="m159 45 44 153H88l26-57h70m-70-14 32-70h10l21 70Z" stroke="#d4d4d8" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M4 206 90 31h30L34 206ZM81 129l44-89h27l-44 89Zm-7 15h27l-30 62H44Z" fill="#dc2626"/>
+    <path d="m153 50 2 9m-16-3 4 8m-19 2 7 6m-17 7 9 3m-14 10 10 1m48-37-3 8m17 2-6 7m15 7-9 3m12 11-9-1" stroke="#f4f4f5" stroke-width="3" stroke-linecap="square"/>
+    <path d="M122 96q24-28 49 0-25 24-49 0Z" fill="#f4f4f5"/>
+    <path d="m123 96 16 1m17-2 14-2" stroke="#09090b" stroke-width="2"/>
+    <circle cx="147" cy="95" r="10" fill="#09090b"/>
+    <circle cx="150" cy="92" r="2.5" fill="#f4f4f5"/>
+    <path d="m129 113-5 6m18-5-1 7m15-9 3 7m7-9 6 5" stroke="#f4f4f5" stroke-width="2.5"/>
+    <circle cx="145" cy="164" r="30" fill="#71717a"/>
+    <circle cx="145" cy="164" r="25" fill="#09090b"/>
+    <path d="M122 166q23 25 46 0a25 25 0 0 1-46 0Z" fill="#a1a1aa"/>
+    <circle cx="145" cy="164" r="10" fill="#d4d4d8"/>
+    <path d="m181 53 38 128-12-12ZM93 190h8m83 0h8" stroke="#f4f4f5" stroke-opacity=".28" stroke-width="2"/>
+    <path d="m69 124 11-2m17-54 6-1m-49 99 8-1" stroke="#09090b" stroke-width="2"/>
+  </g>
+  <path d="M0 0h900v1100H0Z" fill="url(#stencil-grain)"/>
+  <g stroke="#dc2626" stroke-width="3"><path d="M42 74h49m-49 0v49m767 760h49v-49M42 878v49h49"/></g>
+  <g fill="#d4d4d8" opacity=".55"><path d="m176 121 8 17h-16Zm595 628 8 17h-16Z"/><path d="M228 969h70v3h-70Zm336 0h110v3H564Z"/></g>
 </svg>

@@ -9,7 +9,7 @@
 }
 .stage-corner { position: absolute; width: 22px; height: 22px; }
 .stage-corner-top { top: 24px; left: 24px; border-top: 1px solid var(--accent-edge); border-left: 1px solid var(--accent-edge); }
-.stage-corner-bottom { right: 24px; bottom: 64px; border-right: 1px solid var(--contrast-border); border-bottom: 1px solid var(--contrast-border); }
+.stage-corner-bottom { right: 24px; bottom: 64px; border-right: 1px solid rgb(244 244 245 / 25%); border-bottom: 1px solid rgb(244 244 245 / 25%); }
 .stage-signal { position: absolute; left: 24px; bottom: 68px; display: flex; align-items: center; gap: 4px; height: 21px; }
 .stage-signal i { display: block; width: 3px; height: 19px; background: var(--accent); transform: scaleY(.45); transform-origin: center; opacity: .75; }
 .stage-signal i:nth-child(2), .stage-signal i:nth-child(4) { transform: scaleY(.75); }
@@ -17,7 +17,7 @@
 .stage-scale { position: absolute; right: 24px; top: 64px; display: grid; justify-items: end; gap: 7px; }
 .stage-scale i { display: block; height: 1px; width: 8px; background: #d4d4d840; }
 .stage-scale i:nth-child(3n + 1) { width: 16px; background: var(--accent-edge); }
-.stage-scale i:nth-child(3n) { background: var(--contrast-border); }
+.stage-scale i:nth-child(3n) { background: rgb(244 244 245 / 25%); }
 
 .button-primary svg { transition: transform .22s ease; }
 

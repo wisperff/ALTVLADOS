@@ -25,6 +25,10 @@ export function VenueSection() {
           <Reveal key={feature.title} delay={index * 60} className="tonal-card venue-feature group flex h-full min-w-0 flex-col">
             <div className="flex items-center justify-between">
               <Icon name={feature.icon} className="h-7 w-7 text-accent-ink transition-transform duration-300 group-hover:-translate-y-1" />
+              <svg className="venue-feature-corner" width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true" focusable="false">
+                <path d="M4 24 24 4v20H4Z" />
+                <path d="m12 24 12-12m-6 12 6-6" />
+              </svg>
             </div>
             <h3 className="venue-feature-title mt-10 text-lg font-semibold tracking-tight">{feature.title}</h3>
             <p className="venue-feature-copy mt-3 text-sm leading-relaxed text-detail">{feature.description}</p>

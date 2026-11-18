@@ -1,0 +1,3 @@
+// Runs in <head> before hydration. Keep the preference values and storage key in
+// sync with theme.ts; no imports or client bundle are needed to choose a palette.
+export const themeBootstrap = `(function(){var r=document.documentElement,m='auto';try{var s=localStorage.getItem('altzavod-theme');if(s==='light'||s==='dark')m=s;}catch(e){}var t=m==='auto'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):m;r.dataset.theme=t;r.dataset.themeMode=m;r.style.colorScheme=t;function c(){document.querySelectorAll('meta[name="theme-color"]').forEach(function(n){n.content=t==='light'?'#efede8':'#09090b';n.removeAttribute('media');});}c();if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',c,{once:true});})();`;
