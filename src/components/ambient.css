@@ -1,24 +1,23 @@
 /* Static decoration is the default, including before hydration. */
 .ambient-stage { isolation: isolate; }
-.ambient-stage .hero-art-top,
 .ambient-stage .art-label { z-index: 10; }
 .stage-decoration { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
 .stage-light {
   position: absolute; left: -12%; top: -15%; width: 62%; height: 130%;
-  background: linear-gradient(90deg, transparent, #b8ff0018 48%, #ff1f7a28 50%, transparent 54%);
+  background: linear-gradient(90deg, transparent, var(--stage-lime-glow) 48%, var(--stage-punk-glow) 50%, transparent 54%);
   opacity: .45; transform: translate3d(8%, 0, 0) rotate(-22deg);
 }
-.stage-corner { position: absolute; width: 22px; height: 22px; border-color: #b8ff0080; }
-.stage-corner-top { top: 65px; left: 20px; border-top: 1px solid #b8ff0080; border-left: 1px solid #b8ff0080; }
-.stage-corner-bottom { right: 20px; bottom: 64px; border-right: 1px solid #ff1f7a80; border-bottom: 1px solid #ff1f7a80; }
-.stage-signal { position: absolute; left: 22px; bottom: 66px; display: flex; align-items: center; gap: 4px; height: 21px; }
+.stage-corner { position: absolute; width: 22px; height: 22px; }
+.stage-corner-top { top: 24px; left: 24px; border-top: 1px solid var(--accent-edge); border-left: 1px solid var(--accent-edge); }
+.stage-corner-bottom { right: 24px; bottom: 64px; border-right: 1px solid var(--punk-border); border-bottom: 1px solid var(--punk-border); }
+.stage-signal { position: absolute; left: 24px; bottom: 68px; display: flex; align-items: center; gap: 4px; height: 21px; }
 .stage-signal i { display: block; width: 3px; height: 19px; background: var(--accent); transform: scaleY(.45); transform-origin: center; opacity: .75; }
 .stage-signal i:nth-child(2), .stage-signal i:nth-child(4) { transform: scaleY(.75); }
 .stage-signal i:nth-child(3) { transform: scaleY(1); }
-.stage-scale { position: absolute; right: 22px; top: 77px; display: grid; justify-items: end; gap: 7px; }
+.stage-scale { position: absolute; right: 24px; top: 64px; display: grid; justify-items: end; gap: 7px; }
 .stage-scale i { display: block; height: 1px; width: 8px; background: #f1f5e840; }
-.stage-scale i:nth-child(3n + 1) { width: 16px; background: #b8ff0080; }
-.stage-scale i:nth-child(3n) { background: #ff1f7a80; }
+.stage-scale i:nth-child(3n + 1) { width: 16px; background: var(--accent-edge); }
+.stage-scale i:nth-child(3n) { background: var(--punk-border); }
 
 .button-primary svg { transition: transform .22s ease; }
 
@@ -45,9 +44,9 @@
 @media (max-width: 767px) {
   .stage-light { width: 50%; opacity: .3; }
   .stage-scale { display: none; }
-  .stage-corner-top { top: 57px; left: 16px; }
-  .stage-corner-bottom { right: 16px; bottom: 57px; }
-  .stage-signal { left: 17px; bottom: 59px; }
+  .stage-corner-top { top: 20px; left: 20px; }
+  .stage-corner-bottom { right: 20px; bottom: 60px; }
+  .stage-signal { left: 20px; bottom: 60px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .stage-light, .stage-signal i { animation: none; }

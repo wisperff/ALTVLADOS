@@ -21,17 +21,17 @@ export function VenueSection() {
 
       <div className="venue-features mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {venue.features.map((feature, index) => (
-          <Reveal key={feature.title} delay={index * 60} className="tonal-card venue-feature group p-6 sm:p-7">
+          <Reveal key={feature.title} delay={index * 60} className="tonal-card venue-feature group flex h-full min-w-0 flex-col">
             <div className="flex items-center justify-between">
               <Icon name={feature.icon} className="h-7 w-7 text-accent-ink transition-transform duration-300 group-hover:-translate-y-1" />
             </div>
-            <h3 className="mt-10 text-lg font-semibold tracking-tight">{feature.title}</h3>
-            <p className="mt-3 max-w-64 text-sm leading-relaxed text-detail">{feature.description}</p>
+            <h3 className="venue-feature-title mt-10 text-lg font-semibold tracking-tight">{feature.title}</h3>
+            <p className="venue-feature-copy mt-3 text-sm leading-relaxed text-detail">{feature.description}</p>
           </Reveal>
         ))}
       </div>
 
-      <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="venue-gallery mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {venue.gallery.map((photo, index) => (
           <Reveal key={photo.src} delay={index * 60} className={index === 0 ? 'sm:col-span-2' : ''}>
             <figure className="gallery-card group relative h-64 overflow-hidden border border-edge-subtle bg-panel sm:h-72 lg:h-80">
