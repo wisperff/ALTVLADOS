@@ -24,7 +24,7 @@
   <path d="M38 933h824M52 951h796" stroke="#d4d4d8" stroke-opacity=".22"/>
   <path d="M0 976h900v124H0Z" fill="#09090b" opacity=".5"/>
   <path d="m216 976-88 124m347-124 12 124m201-124 113 124M0 1031h900" stroke="#d4d4d8" stroke-opacity=".08"/>
-  <g transform="translate(96 239) scale(2.95)">
+  <g transform="translate(142 240) scale(2.45)">
     <path d="m155 31 27 14 48 161h-23Z" fill="url(#steel)"/>
     <path d="m155 31 52 175H75Z" fill="#09090b"/>
     <path d="m159 45 44 153H88l26-57h70m-70-14 32-70h10l21 70Z" stroke="#d4d4d8" stroke-width="3.5" stroke-linejoin="round"/>
