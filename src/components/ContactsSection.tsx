@@ -9,7 +9,7 @@ export function ContactsSection() {
   return (
     <section id="contacts" className="section-shell section-space" aria-labelledby="contacts-title">
       <Reveal className="contacts-surface glass-surface">
-        <div className="min-w-0">
+        <div className="contacts-copy min-w-0">
           <p className="eyebrow text-detail">{contacts.eyebrow}</p>
           <h2 id="contacts-title" className="section-title !mt-4">{contacts.title}</h2>
           <p className="!mt-6 max-w-xl text-base leading-relaxed text-secondary">{telegram.description}</p>
@@ -22,15 +22,15 @@ export function ContactsSection() {
             </svg>
             <Icon name="arrowUpRight" className="h-4 w-4 text-detail" />
           </div>
-          <h3 className="!mt-6 text-xl font-semibold tracking-tight sm:text-2xl">{telegram.title}</h3>
+          <h3 className="telegram-heading !mt-6 min-w-0 text-xl font-semibold tracking-tight [overflow-wrap:anywhere] sm:text-2xl">{telegram.title}</h3>
           {telegram.href ? (
             <a href={telegram.href} target="_blank" rel="noopener noreferrer" className="button button-primary telegram-cta">
-              <span>{telegram.longCTA}</span><Icon name="arrowUpRight" />
+              <span className="min-w-0 [overflow-wrap:anywhere]">{telegram.longCTA}</span><Icon name="arrowUpRight" />
             </a>
           ) : (
             <>
               <button type="button" disabled aria-describedby="telegram-pending" className="button button-primary telegram-cta disabled:!cursor-not-allowed disabled:!transform-none">
-                <span>{telegram.longCTA}</span><Icon name="arrowUpRight" />
+                <span className="min-w-0 [overflow-wrap:anywhere]">{telegram.longCTA}</span><Icon name="arrowUpRight" />
               </button>
               <p id="telegram-pending" className="!mt-3 text-xs leading-relaxed text-detail">{telegram.pendingLabel}</p>
             </>
@@ -38,7 +38,7 @@ export function ContactsSection() {
           {contacts.other.some((contact) => contact.href) && (
             <div className="contact-chips">
               {contacts.other.map((contact) => contact.href ? (
-                <a key={contact.label} href={contact.href} target={contact.href.startsWith('https://') ? '_blank' : undefined} rel={contact.href.startsWith('https://') ? 'noopener noreferrer' : undefined} className="contact-chip">
+                <a key={contact.label} href={contact.href} target={contact.href.startsWith('https://') ? '_blank' : undefined} rel={contact.href.startsWith('https://') ? 'noopener noreferrer' : undefined} className="contact-chip min-w-0 max-w-full [overflow-wrap:anywhere]">
                   {contact.label}<Icon name="arrowUpRight" className="h-3 w-3 text-accent-ink" />
                 </a>
               ) : null)}
@@ -49,3 +49,4 @@ export function ContactsSection() {
     </section>
   );
 }
+

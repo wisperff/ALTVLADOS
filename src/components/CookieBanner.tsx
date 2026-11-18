@@ -73,11 +73,11 @@ export function CookieBanner() {
           <a className="text-ui-link underline underline-offset-4 hover:text-bright" href={site.footer.privacy.href || '#privacy'}>{copy.policyLabel}</a>
         </p>
       </div>
-      <div className="flex shrink-0 flex-wrap gap-3">
-        <button className="button button-ghost min-h-11 text-xs" type="button" onClick={() => saveChoice(false)}>
+      <div className="cookie-actions grid w-full min-w-0 shrink-0 grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:gap-3">
+        <button className="button button-ghost min-h-11 min-w-0 w-full text-xs sm:w-auto" type="button" onClick={() => saveChoice(false)}>
           {copy.rejectLabel}
         </button>
-        <button className="button button-primary min-h-11 text-xs" type="button" onClick={() => saveChoice(true)}>
+        <button className="button button-primary min-h-11 min-w-0 w-full text-xs sm:w-auto" type="button" onClick={() => saveChoice(true)}>
           {copy.acceptLabel}
         </button>
       </div>

@@ -13,7 +13,7 @@ export function HeroSection() {
         <div className="hero-meta"><span className="eyebrow"><span className="status-dot" />{site.hero.eyebrow}</span><span>{site.hero.city}<span className="hero-cross" aria-hidden="true"> + </span></span></div>
         <div className="hero-grid">
           <div className="hero-copy">
-            <p className="hero-alias">{site.alias}<span aria-hidden="true">✳</span></p>
+            <p className="hero-alias">{site.alias}<span aria-hidden="true"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" focusable="false"><path d="M10 2v16M2 10h16M4.35 4.35l11.3 11.3M4.35 15.65l11.3-11.3" /></svg></span></p>
             <h1 id="hero-title" className="hero-title">{site.hero.title.slice(0, 3)}<br />{site.hero.title.slice(3)}<span className="hero-period" aria-hidden="true">.</span></h1>
             <p className="hero-tagline">{site.hero.tagline}</p>
             <p className="hero-description">{site.hero.description}</p>
@@ -23,7 +23,7 @@ export function HeroSection() {
             </div>
           </div>
           <AmbientStage>
-            <Image src={assetPath(site.hero.visual)} alt={site.hero.visualAlt} fill priority sizes="(max-width: 767px) 100vw, 54vw" className="hero-image" />
+            <Image src={assetPath(site.hero.visual)} alt={site.hero.visualAlt} fill priority sizes="(max-width: 1023px) 100vw, 54vw" className="hero-image" />
             <div className="art-label"><span className="art-label-dot" /><span>{site.hero.visualLabel}</span><Icon name="arrowDown" /></div>
           </AmbientStage>
         </div>
