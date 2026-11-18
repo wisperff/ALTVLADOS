@@ -57,6 +57,10 @@ svg { flex-shrink: 0; }
 .section-space { padding-block: var(--section-space); }
 .section-title { font-family: var(--font-display), sans-serif; font-size: clamp(28px, 3.8vw, 54px); line-height: 1.16; font-weight: 800; letter-spacing: -.055em; white-space: pre-line; text-wrap: balance; overflow-wrap: anywhere; }
 .eyebrow { font-size: 10px; line-height: 1.6; letter-spacing: .14em; font-weight: 600; text-transform: uppercase; }
+.section-eyebrow { display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; min-height: 20px; margin: 0 0 16px; color: var(--eyebrow-text); font-family: var(--font-tech), monospace; font-size: 12px; font-weight: 600; line-height: 1.5; letter-spacing: .08em; text-transform: uppercase; }
+.section-eyebrow-plus { display: block; flex: 0 0 14px; width: 14px; height: 14px; color: var(--eyebrow-plus); }
+.section-eyebrow-label { flex: 0 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.section-eyebrow-line { flex: 1 1 0; min-width: 0; height: 1px; margin-inline-start: 6px; background: var(--eyebrow-line); }
 .text-muted { color: var(--muted); line-height: 1.8; }
 .accent { color: var(--accent-ink); }
 .button { display: inline-flex; justify-content: center; align-items: center; gap: 12px; min-width: 0; max-width: 100%; min-height: var(--button-height); padding: 14px 20px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; line-height: 1.5; border: 1px solid transparent; text-align: center; overflow-wrap: anywhere; transition: transform .22s ease, opacity .22s ease; }
@@ -132,7 +136,6 @@ svg { flex-shrink: 0; }
 .hero-scroll svg { margin-left: 10px; }
 .ticker { overflow: hidden; border-block: 1px solid var(--accent-edge); background: var(--accent); color: var(--on-accent); }
 .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 32px; }
-.section-heading .eyebrow { color: var(--muted); margin-bottom: 12px; }
 .status-label { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 8px; padding: 8px 12px; border: 1px solid var(--glass-border); border-radius: 999px; color: var(--text-status); background: var(--tonal-surface); font-size: 10px; white-space: nowrap; }
 .show-placeholder { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); overflow: hidden; }
 .show-visual { position: relative; min-height: 380px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-right: 1px solid var(--glass-border); background: linear-gradient(145deg, #181a11, #0d0d10 65%); }
@@ -168,7 +171,8 @@ svg { flex-shrink: 0; }
 .venue-feature-copy { margin-top: 12px; font-size: 14px; line-height: 1.7; }
 .gallery-card { border-radius: var(--radius-card); box-shadow: inset 0 1px 0 var(--glass-highlight); }
 .venue-gallery-note { margin-top: 16px; }
-.contacts-surface { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 32px; padding: var(--panel-padding); }
+.contacts-surface { padding: var(--panel-padding); }
+.contacts-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 32px; }
 .contacts-copy > .text-secondary { max-width: 44ch; font-size: 15px; line-height: 1.75; }
 .telegram-surface { min-width: 0; padding: var(--card-padding); border: 1px solid var(--telegram-border); border-radius: 24px; background: var(--telegram-surface); box-shadow: inset 0 1px 0 var(--glass-highlight); }
 .telegram-heading { font-family: var(--font-display), sans-serif; font-size: clamp(20px, 2vw, 26px); font-weight: 700; line-height: 1.3; letter-spacing: -.035em; text-wrap: balance; }
@@ -239,7 +243,7 @@ svg { flex-shrink: 0; }
   .hero-title { font-size: clamp(36px, 13vw, 108px); }
   .hero-title br, .hero-period { display: none; }
   .hero-art { aspect-ratio: 16 / 10; max-height: 520px; }
-  .contacts-surface { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .contacts-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   .show-placeholder { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
   .wave-mark { gap: 5px; }
   .wave-mark i { width: 5px; }
@@ -256,6 +260,7 @@ svg { flex-shrink: 0; }
   .glass-surface { background: var(--glass-mobile); backdrop-filter: none; -webkit-backdrop-filter: none; }
   .cookie-notice { background: var(--cookie-surface); }
   .eyebrow { font-size: 10px; letter-spacing: .08em; }
+  .section-eyebrow { font-size: 11px; }
   .hero-meta { padding-block: 24px 17px; }
   .hero-meta > span:last-child { display: none; }
   .hero-copy { padding-block: 8px 0; }

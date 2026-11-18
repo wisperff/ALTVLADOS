@@ -3,14 +3,15 @@ import { site } from '@/data/site';
 import { assetPath } from '@/lib/assetPath';
 import { Icon } from './Icon';
 import { Reveal } from './Reveal';
+import { SectionEyebrow } from './SectionEyebrow';
 
 export function VenueSection() {
   const venue = site.venue;
   return (
     <section id="venue" className="section-shell" aria-labelledby="venue-title">
       <Reveal className="venue-intro glass-surface">
-        <p className="eyebrow">{venue.eyebrow}</p>
-        <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_1fr] lg:items-end lg:gap-16">
+        <SectionEyebrow label={venue.eyebrow} />
+        <div className="grid gap-8 lg:grid-cols-[1.15fr_1fr] lg:items-end lg:gap-16">
           <h2 id="venue-title" className="section-title whitespace-pre-line">{venue.title}</h2>
           <div className="max-w-xl lg:pb-2">
             <p className="text-base leading-relaxed text-copy sm:text-lg">{venue.description}</p>

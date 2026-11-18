@@ -3,6 +3,7 @@
 import { site } from '@/data/site';
 import { Icon } from './Icon';
 import { Reveal } from './Reveal';
+import { SectionEyebrow } from './SectionEyebrow';
 import { useTickets } from './TicketProvider';
 
 export function ShowsSection() {
@@ -11,7 +12,7 @@ export function ShowsSection() {
   const telegram = site.contacts.telegram;
   const placeholder = content.mode === 'placeholder' || site.shows.length === 0;
   return <section id="shows" className="section-shell section-space" aria-labelledby="shows-title">
-    <Reveal><div className="section-heading"><div><p className="eyebrow">{content.eyebrow}</p><h2 id="shows-title" className="section-title">{content.title}<span className="accent"> /</span></h2></div><span className="status-label punk-sticker"><span className="status-dot" />{placeholder ? content.status : content.mode === 'demo' ? content.demoLabel : content.liveLabel}</span></div></Reveal>
+    <Reveal><SectionEyebrow label={content.eyebrow} /><div className="section-heading"><h2 id="shows-title" className="section-title">{content.title}<span className="accent"> /</span></h2><span className="status-label punk-sticker"><span className="status-dot" />{placeholder ? content.status : content.mode === 'demo' ? content.demoLabel : content.liveLabel}</span></div></Reveal>
     {placeholder ? <Reveal><div className="show-placeholder glass-surface">
       <div className="show-visual" aria-hidden="true"><span className="show-orbit orbit-one" /><span className="show-orbit orbit-two" /><div className="wave-mark">{[2, 4, 6, 8, 10, 7, 5, 3, 5, 8, 10, 6, 4, 2].map((height, index) => <i key={index} style={{ height: `${height * 9}px` }} />)}</div></div>
       <div className="show-placeholder-copy"><p className="eyebrow accent">{content.emptyLabel}</p><h3>{content.emptyTitle}</h3><p className="text-muted">{content.emptyDescription}</p>
