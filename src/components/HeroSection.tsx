@@ -31,7 +31,18 @@ export function HeroSection() {
       </div>
       <div className="ticker" aria-hidden="true">
         <div className="ticker-motion">
-          {[0, 1].map(track => <div className="ticker-track" key={track}>{site.hero.ticker.map(item => <span key={item}>{item}<span className="ticker-star">✳</span></span>)}</div>)}
+          {[0, 1].map(track => (
+            <div className="ticker-track" key={track}>
+              {site.hero.ticker.map(item => (
+                <span key={item}>
+                  {item}
+                  <svg className="ticker-star" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true" focusable="false">
+                    <path d="M10 2v16M2 10h16M4.35 4.35l11.3 11.3M4.35 15.65l11.3-11.3" />
+                  </svg>
+                </span>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </section>
