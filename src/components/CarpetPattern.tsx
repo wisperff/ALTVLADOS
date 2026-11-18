@@ -5,7 +5,7 @@ export function CarpetPattern() {
     <div
       aria-hidden="true"
       className="carpet-pattern"
-      style={{ backgroundImage: `url("${assetPath("/images/carpet-pattern.svg?v=floral-1")}")` }}
+      style={{ backgroundImage: `url("${assetPath("/images/carpet-pattern.svg?v=geometric-2")}")` }}
     />
   );
 }
