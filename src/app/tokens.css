@@ -84,7 +84,10 @@
   --dialog-surface: #120d0e;
   --ticket-carpet-frame: 12px;
   --carpet-thread: #8c8278;
-  --carpet-content: rgb(13 12 13 / 90%);
+  --carpet-scrim-edge: rgb(18 13 14 / 66%);
+  --carpet-scrim-center: rgb(18 13 14 / 54%);
+  --carpet-copy: #e4e4e7;
+  --carpet-detail: #d4d4d8;
   --cookie-surface: #141416;
   --footer-bg: rgb(9 9 11 / 72%);
   --ambient-smoke: rgb(255 255 255 / 4%);
