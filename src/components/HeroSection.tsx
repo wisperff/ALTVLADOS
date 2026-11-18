@@ -3,7 +3,6 @@ import { site } from '@/data/site';
 import { assetPath } from '@/lib/assetPath';
 import { Icon } from './Icon';
 import { AmbientStage } from './AmbientStage';
-import { BrandMark } from './BrandMark';
 import './ambient.css';
 
 export function HeroSection() {
@@ -25,7 +24,6 @@ export function HeroSection() {
           </div>
           <AmbientStage>
             <Image src={assetPath(site.hero.visual)} alt={site.hero.visualAlt} fill priority sizes="(max-width: 1023px) 100vw, 54vw" className="hero-image" />
-            <div className="hero-brand-stamp" aria-hidden="true"><BrandMark className="hero-brand-mark h-20 w-20" /></div>
             <div className="art-label"><span className="art-label-dot" /><span>{site.hero.visualLabel}</span><Icon name="arrowDown" /></div>
           </AmbientStage>
         </div>

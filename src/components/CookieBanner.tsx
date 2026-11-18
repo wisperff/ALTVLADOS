@@ -32,17 +32,20 @@ export function CookieBanner() {
 
     const root = document.documentElement;
     const reserveSpace = () => {
-      const height = Math.ceil(element.getBoundingClientRect().height);
-      root.style.setProperty('--cookie-reserve', `${height + 32}px`);
+      const { height, bottom } = element.getBoundingClientRect();
+      const bottomGap = Math.max(0, window.innerHeight - bottom);
+      root.style.setProperty('--cookie-reserve', `${Math.ceil(height + bottomGap + 16)}px`);
     };
     reserveSpace();
     const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(reserveSpace);
     observer?.observe(element);
     window.addEventListener('resize', reserveSpace, { passive: true });
+    window.visualViewport?.addEventListener('resize', reserveSpace, { passive: true });
 
     return () => {
       observer?.disconnect();
       window.removeEventListener('resize', reserveSpace);
+      window.visualViewport?.removeEventListener('resize', reserveSpace);
       root.style.removeProperty('--cookie-reserve');
     };
   }, [visible]);
@@ -64,20 +67,20 @@ export function CookieBanner() {
     <aside
       ref={banner}
       aria-labelledby="cookie-title"
-      className="cookie-notice fixed bottom-4 left-4 right-4 z-30 mx-auto flex max-w-5xl flex-col gap-5 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between"
+      className="cookie-notice fixed z-30 flex flex-col gap-3 p-3.5 text-xs sm:p-5"
     >
       <div className="max-w-xl">
-        <p id="cookie-title" className="text-sm font-semibold text-bright">{copy.title}</p>
-        <p className="mt-2 text-xs leading-relaxed text-ui-muted">
+        <p id="cookie-title" className="text-xs font-semibold text-bright">{copy.title}</p>
+        <p className="cookie-description text-xs leading-relaxed text-ui-muted">
           {copy.description}{" "}
           <a className="text-ui-link underline underline-offset-4 hover:text-bright" href={site.footer.privacy.href || '#privacy'}>{copy.policyLabel}</a>
         </p>
       </div>
-      <div className="cookie-actions grid w-full min-w-0 shrink-0 grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:gap-3">
-        <button className="button button-ghost min-h-11 min-w-0 w-full text-xs sm:w-auto" type="button" onClick={() => saveChoice(false)}>
+      <div className="cookie-actions grid w-full min-w-0 shrink-0 grid-cols-2 gap-2">
+        <button className="button button-ghost min-h-11 w-full text-xs" type="button" onClick={() => saveChoice(false)}>
           {copy.rejectLabel}
         </button>
-        <button className="button button-primary min-h-11 min-w-0 w-full text-xs sm:w-auto" type="button" onClick={() => saveChoice(true)}>
+        <button className="button button-primary min-h-11 w-full text-xs" type="button" onClick={() => saveChoice(true)}>
           {copy.acceptLabel}
         </button>
       </div>

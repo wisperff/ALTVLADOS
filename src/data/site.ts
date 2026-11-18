@@ -56,9 +56,8 @@ export const site = {
         backToTop: 'Наверх',
         navigationLabel: 'Навигация по сайту',
         theme: {
-            label: 'Тема',
-            switchLabel: 'Переключить',
-            modes: { auto: 'Авто', light: 'Светлая', dark: 'Тёмная' }
+            switchToLight: 'Переключить на светлую тему',
+            switchToDark: 'Переключить на тёмную тему'
         }
     },
     hero: {
