@@ -35,7 +35,7 @@ export function Footer() {
 
         <div className="footer-rug-zone">
           <div className="footer-rug-art pointer-events-none select-none" aria-hidden="true">
-            <RagRugRunner className="footer-rug-runner" />
+            <RagRugRunner className="footer-rug-runner" orientation="horizontal" />
           </div>
           <div className="footer-rug-legal footer-rug-panel">
             <p className="text-xs text-secondary">{footer.legalName}</p>

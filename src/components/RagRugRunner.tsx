@@ -1,6 +1,6 @@
 import { useId } from "react";
 
-type RagRugRunnerProps = { className?: string };
+type RagRugRunnerProps = { className?: string; orientation?: "vertical" | "horizontal" };
 
 // Muted scraps of cloth rather than the medallions of the ticket-window rug.
 const yarn = [
@@ -60,13 +60,15 @@ function weavePaths() {
 const woven = weavePaths();
 
 /** A small, handwoven rag runner; all variation is fixed for stable SSR. */
-export function RagRugRunner({ className = "" }: RagRugRunnerProps) {
+export function RagRugRunner({ className = "", orientation = "vertical" }: RagRugRunnerProps) {
   const id = `rag-rug-${useId()}`;
+  const horizontal = orientation === "horizontal";
+  const rotation = horizontal ? "translate(600 0) rotate(90)" : undefined;
 
   return (
     <svg
       className={`pointer-events-none select-none ${className}`}
-      viewBox="0 0 240 600"
+      viewBox={horizontal ? "0 0 600 240" : "0 0 240 600"}
       preserveAspectRatio="none"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -102,7 +104,7 @@ export function RagRugRunner({ className = "" }: RagRugRunnerProps) {
         </linearGradient>
       </defs>
 
-      <g strokeWidth="2.25" strokeLinecap="round">
+      <g transform={rotation} strokeWidth="2.25" strokeLinecap="round">
         {yarn.map((color, index) => (
           <use key={color} href={`#${id}-yarn-${index}`} stroke={color} />
         ))}
@@ -111,7 +113,7 @@ export function RagRugRunner({ className = "" }: RagRugRunnerProps) {
         </g>
       </g>
 
-      <g clipPath={`url(#${id}-cloth)`}>
+      <g transform={rotation} clipPath={`url(#${id}-cloth)`}>
         <path d="M18 42h204v516H18Z" fill="#432d35" />
         {woven.groups.map(({ cloth }, index) => <path key={yarn[index]} d={cloth} fill={yarn[index]} />)}
         <g strokeOpacity=".6" strokeWidth="1.2">
