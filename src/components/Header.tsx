@@ -188,7 +188,7 @@ export function Header() {
       const keyboardFocus = active instanceof HTMLElement &&
         root.current?.contains(active) && active.matches(':focus-visible');
 
-      if (reducedMotion.matches || menuOpenRef.current || pinned.current || keyboardFocus || y < 48) {
+      if (reducedMotion.matches || document.documentElement.classList.contains('theme-transitioning') || menuOpenRef.current || pinned.current || keyboardFocus || y < 48) {
         direction = 0;
         distance = 0;
         setHeaderHidden(false);
@@ -322,7 +322,7 @@ export function Header() {
           </nav>
 
           <div className="header-actions">
-            <ThemeToggle />
+            <ThemeToggle onPrepareTransition={() => revealHeader(true)} />
             <button
               type="button"
               className="button button-primary header-ticket"

@@ -5,7 +5,7 @@ import { site } from '@/data/site';
 import { getServerColorTheme, getColorTheme, subscribeToTheme } from '@/lib/theme';
 import { createThemeTransitionController } from '@/lib/themeTransition';
 
-export function ThemeToggle() {
+export function ThemeToggle({ onPrepareTransition }: { onPrepareTransition?: () => void }) {
   const theme = useSyncExternalStore(subscribeToTheme, getColorTheme, getServerColorTheme);
   const transition = useRef<ReturnType<typeof createThemeTransitionController> | null>(null);
   useEffect(() => () => transition.current?.cancel(), []);
@@ -20,7 +20,7 @@ export function ThemeToggle() {
       title={label}
       onClick={event => {
         transition.current ??= createThemeTransitionController();
-        transition.current.toggle(event.currentTarget);
+        transition.current.toggle(event.currentTarget, onPrepareTransition);
       }}
     >
       <svg className="theme-icon" data-mode="light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true" focusable="false">
