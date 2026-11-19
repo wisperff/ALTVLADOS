@@ -161,6 +161,10 @@ export function Header() {
     let distance = 0;
     let frame: number | null = null;
     let settleTimer: number | undefined;
+    // Native hash scrolling, font layout and restoration can arrive after mount.
+    // Keep the header until a downward page gesture, rather than a scroll event.
+    let waitingForDownIntent = Boolean(getAnchorTarget(window.location.hash));
+    let touchOrigin: { x: number; y: number } | null = null;
 
     const reset = (pin: boolean) => {
       lastY = readY();
@@ -178,6 +182,47 @@ export function Header() {
       }, 180);
     }
 
+    const removeIntentListeners = () => {
+      window.removeEventListener('wheel', onWheelIntent);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
+      document.removeEventListener('keydown', onKeyIntent);
+    };
+    const releaseInitialHeader = () => {
+      if (!waitingForDownIntent || menuOpenRef.current || document.body.style.overflow === 'hidden') return;
+      waitingForDownIntent = false;
+      touchOrigin = null;
+      // A compositor scroll may precede its passive wheel listener. Retain the
+      // last observed position so this gesture's first delta still reaches RAF.
+      direction = 0;
+      distance = 0;
+      removeIntentListeners();
+    };
+    const onWheelIntent = (event: WheelEvent) => {
+      if (event.isTrusted && !event.defaultPrevented && !event.ctrlKey && event.deltaY > 0) releaseInitialHeader();
+    };
+    const onTouchStart = (event: TouchEvent) => {
+      const touch = event.touches.length === 1 ? event.touches[0] : null;
+      touchOrigin = event.isTrusted && touch ? { x: touch.clientX, y: touch.clientY } : null;
+    };
+    const onTouchMove = (event: TouchEvent) => {
+      const touch = event.touches.length === 1 ? event.touches[0] : null;
+      if (!event.isTrusted || event.defaultPrevented || !touchOrigin || !touch) return;
+      const down = touchOrigin.y - touch.clientY;
+      if (down > 4 && down > Math.abs(touchOrigin.x - touch.clientX)) releaseInitialHeader();
+    };
+    const onTouchEnd = () => { touchOrigin = null; };
+    const onKeyIntent = (event: KeyboardEvent) => {
+      if (!event.isTrusted || event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      if (event.key !== 'ArrowDown' && event.key !== 'PageDown' && event.key !== ' ') return;
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]')) return;
+      if (event.key === ' ' && target?.closest('button, summary, [role="button"]')) return;
+      releaseInitialHeader();
+    };
+
     const update = () => {
       frame = null;
       if (pinned.current) keepPinned();
@@ -188,7 +233,7 @@ export function Header() {
       const keyboardFocus = active instanceof HTMLElement &&
         root.current?.contains(active) && active.matches(':focus-visible');
 
-      if (reducedMotion.matches || document.documentElement.classList.contains('theme-transitioning') || menuOpenRef.current || pinned.current || keyboardFocus || y < 48) {
+      if (waitingForDownIntent || reducedMotion.matches || document.documentElement.classList.contains('theme-transitioning') || menuOpenRef.current || pinned.current || keyboardFocus || y < 48) {
         direction = 0;
         distance = 0;
         setHeaderHidden(false);
@@ -219,9 +264,18 @@ export function Header() {
 
     resetScroll.current = reset;
     if (pinned.current) keepPinned();
+    if (waitingForDownIntent) {
+      window.addEventListener('wheel', onWheelIntent, { passive: true });
+      window.addEventListener('touchstart', onTouchStart, { passive: true });
+      window.addEventListener('touchmove', onTouchMove, { passive: true });
+      window.addEventListener('touchend', onTouchEnd, { passive: true });
+      window.addEventListener('touchcancel', onTouchEnd, { passive: true });
+      document.addEventListener('keydown', onKeyIntent);
+    }
     window.addEventListener('scroll', onScroll, { passive: true });
     reducedMotion.addEventListener('change', onMotionChange);
     return () => {
+      removeIntentListeners();
       window.removeEventListener('scroll', onScroll);
       reducedMotion.removeEventListener('change', onMotionChange);
       if (frame !== null) window.cancelAnimationFrame(frame);

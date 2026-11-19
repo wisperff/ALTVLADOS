@@ -83,13 +83,11 @@ export function createThemeTransitionController() {
       // Its React visibility state must agree before the native snapshots begin.
       if (onPrepareTransition) flushSync(onPrepareTransition);
       const rect = button.getBoundingClientRect();
-      const offsetLeft = viewport?.offsetLeft ?? 0;
-      const offsetTop = viewport?.offsetTop ?? 0;
-      x = rect.left + offsetLeft + rect.width / 2;
-      y = rect.top + offsetTop + rect.height / 2;
-      const width = Math.max(window.innerWidth, offsetLeft + (viewport?.width ?? window.innerWidth));
-      const height = Math.max(window.innerHeight, offsetTop + (viewport?.height ?? window.innerHeight));
-      radius = Math.hypot(Math.max(x, width - x), Math.max(y, height - y));
+      // Fixed controls and root snapshots share CSS viewport coordinates.
+      // Adding visualViewport offsets shifts the wave away from the button.
+      x = Math.round(rect.left + rect.width / 2);
+      y = Math.round(rect.top + rect.height / 2);
+      radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
       run.origin = ['--theme-x', '--theme-y'].map(name => ({
         name, value: root.style.getPropertyValue(name), priority: root.style.getPropertyPriority(name),
       }));
@@ -106,6 +104,9 @@ export function createThemeTransitionController() {
     window.addEventListener('resize', interrupt, { passive: true });
     window.addEventListener('wheel', interrupt, { passive: true });
     window.addEventListener('touchstart', interrupt, { passive: true });
+    // Restore normal CSS transitions before another control handles input.
+    window.addEventListener('pointerdown', interrupt, { passive: true });
+    window.addEventListener('keydown', interrupt, { capture: true });
     viewport?.addEventListener('resize', interrupt, { passive: true });
     viewport?.addEventListener('scroll', interrupt, { passive: true });
     document.addEventListener('visibilitychange', onVisibilityChange);
@@ -115,6 +116,8 @@ export function createThemeTransitionController() {
       window.removeEventListener('resize', interrupt);
       window.removeEventListener('wheel', interrupt);
       window.removeEventListener('touchstart', interrupt);
+      window.removeEventListener('pointerdown', interrupt);
+      window.removeEventListener('keydown', interrupt, true);
       viewport?.removeEventListener('resize', interrupt);
       viewport?.removeEventListener('scroll', interrupt);
       document.removeEventListener('visibilitychange', onVisibilityChange);
@@ -142,7 +145,7 @@ export function createThemeTransitionController() {
       try {
         const pseudoElement = target === 'light' ? '::view-transition-new(root)' : '::view-transition-old(root)';
         run.animation = root.animate({ clipPath: target === 'light' ? [from, to] : [to, from] }, {
-          duration: 300,
+          duration: 250,
           easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
           fill: 'both',
           pseudoElement,
@@ -156,7 +159,9 @@ export function createThemeTransitionController() {
         fail();
       }
     }, fail).catch(fail);
-    void run.transition.finished.then(() => release(run), fail);
+    // Deal with a failed update before finally releases this run's class/fill.
+    // A skipped older transition must never clean up a newer wave.
+    void run.transition.finished.catch(fail).finally(() => release(run)).catch(fail);
   }
 
   return {
