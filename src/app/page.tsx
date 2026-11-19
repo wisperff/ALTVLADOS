@@ -7,10 +7,12 @@ import { ContactsSection } from '@/components/ContactsSection';
 import { Footer } from '@/components/Footer';
 import { CookieBanner } from '@/components/CookieBanner';
 import { TicketProvider } from '@/components/TicketProvider';
+import { ScrollProgress } from '@/components/ScrollProgress';
 
 export default function Home() {
   return (
     <TicketProvider>
+      <ScrollProgress />
       <a href="#main" className="skip-link">{site.ui.skip}</a>
       <div id="top" />
       <Header />
@@ -25,3 +27,4 @@ export default function Home() {
     </TicketProvider>
   );
 }
+
