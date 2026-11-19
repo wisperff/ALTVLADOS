@@ -142,30 +142,44 @@ body::after {
   :root[data-theme='light'] .ticket-dialog { --ticket-carpet-frame: 44px; }
 }
 
-/* A woven runner belongs only to the legal area; existing app layers stay intact. */
+/* Keep footer information dark; the original rug is a separate, full-colour strip. */
+.site-footer {
+  color-scheme: dark;
+  --page-bg: #09090b;
+  --footer-bg: #09090b;
+  --text-primary: #f4f4f5;
+  --text-copy: #d4d4d8;
+  --text-detail: #b0b0b8;
+  --text-secondary: #a1a1aa;
+  --brand-ink: #f4f4f5;
+  --brand-secondary: #d4d4d8;
+  --brand-footer-detail: #a1a1aa;
+  --contrast-ink: #d4d4d8;
+  --accent: #dc2626;
+  --glass-border: rgb(255 255 255 / 12%);
+  --border-subtle: rgb(255 255 255 / 10%);
+  --border-soft: rgb(255 255 255 / 15%);
+  --border-medium: rgb(255 255 255 / 20%);
+  --border-decoration: rgb(255 255 255 / 25%);
+  --control-bg: #222227;
+  --control-hover-layer: #2c2c33;
+  --focus-ring: #d4d4d8;
+  color: var(--text-primary);
+}
 .footer-rug-zone {
-  --footer-rug-panel: color-mix(in srgb, var(--page-bg) 85%, transparent);
-  --footer-rug-highlight: var(--footer-rug-panel);
   position: relative;
   isolation: isolate;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-content: center;
-  gap: 16px;
-  min-width: 0;
-  min-height: 280px;
-  margin-top: 40px;
-  padding: 32px 12px;
+  margin: 0 0 32px;
+  padding: 16px 12px;
   overflow: hidden;
   border-block: 1px solid var(--border-subtle);
 }
 .footer-rug-art {
-  position: absolute;
+  position: relative;
   z-index: 0;
-  inset: 50% 12px auto;
+  width: 100%;
   height: clamp(128px, 42vw, 176px);
-  opacity: .32;
-  transform: translateY(-50%);
+  opacity: 1;
   pointer-events: none;
   user-select: none;
 }
@@ -176,39 +190,32 @@ body::after {
   overflow: visible;
   filter: drop-shadow(0 8px 12px var(--elevation-shadow));
 }
-.footer-rug-panel {
+.footer-information {
   position: relative;
   z-index: 10;
-  min-width: 0;
-  padding: 8px 12px;
-  border-radius: 12px;
-  background: var(--footer-rug-panel);
-  overflow-wrap: anywhere;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  margin-top: 28px;
+  padding: 28px 12px;
+  background: #101012;
+  border-block: 1px solid var(--border-subtle);
 }
-.footer-rug-links { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
-.footer-rug-zone #privacy[data-privacy-highlight='true'] { background: var(--footer-rug-highlight); }
+.footer-legal, .footer-legal-links, .footer-privacy { min-width: 0; overflow-wrap: anywhere; }
+.footer-legal-links { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.footer-information #privacy[data-privacy-highlight='true'] { background: #161619; }
 
 @media (min-width: 768px) {
-  .footer-rug-zone {
+  .footer-rug-art { height: clamp(180px, 18vw, 240px); }
+  .footer-information {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 32px;
-    row-gap: 20px;
-    min-height: 320px;
     padding-block: 32px;
   }
-  .footer-rug-art {
-    height: clamp(180px, 18vw, 240px);
-    opacity: 1;
-  }
-  .footer-rug-panel { width: fit-content; max-width: 100%; }
-  .footer-rug-legal { grid-column: 1; grid-row: 1; }
-  .footer-rug-links { grid-column: 2; grid-row: 1; justify-self: end; align-items: flex-end; text-align: right; }
-  .footer-rug-privacy { grid-column: 1; grid-row: 2; }
+  .footer-legal { grid-column: 1; grid-row: 1; }
+  .footer-legal-links { grid-column: 2; grid-row: 1; align-items: flex-end; text-align: right; }
+  .footer-privacy { grid-column: 1; grid-row: 2; }
 }
 @media (min-width: 1024px) {
-  .footer-rug-zone {
-    column-gap: 40px;
-    min-height: 360px;
-  }
+  .footer-information { column-gap: 40px; }
 }
-
