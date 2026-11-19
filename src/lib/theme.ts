@@ -6,18 +6,22 @@ export type ColorTheme = Exclude<ThemeMode, 'auto'>;
 export const THEME_STORAGE_KEY = 'altzavod-theme';
 const THEME_EVENT = 'altzavod:theme-change';
 const SYSTEM_THEME_QUERY = '(prefers-color-scheme: light)';
+// Keep this visit's explicit choice when storage is denied or full. It must
+// survive StrictMode resubscriptions and later mounts of the theme control.
+let transientMode: ThemeMode | undefined;
 
 export function isThemeMode(value: unknown): value is ThemeMode {
   return value === 'auto' || value === 'light' || value === 'dark';
 }
 
-function readStoredMode(): ThemeMode {
+function readStoredMode(): ThemeMode | undefined {
   try {
     const value = window.localStorage.getItem(THEME_STORAGE_KEY);
     return isThemeMode(value) ? value : 'auto';
   } catch {
     // Private browsing and embedded browsers may deny access to localStorage.
-    return 'auto';
+    // An unreadable value must not erase a preference the head script obtained.
+    return undefined;
   }
 }
 
@@ -59,8 +63,10 @@ export function setThemeMode(mode: ThemeMode) {
   try {
     if (mode === 'auto') window.localStorage.removeItem(THEME_STORAGE_KEY);
     else window.localStorage.setItem(THEME_STORAGE_KEY, mode);
+    transientMode = undefined;
   } catch {
     // The chosen theme still works for this visit when persistence is blocked.
+    transientMode = mode;
   }
   window.dispatchEvent(new Event(THEME_EVENT));
 }
@@ -74,17 +80,20 @@ export function subscribeToTheme(onChange: () => void) {
   };
   const onStorageChange = (event: StorageEvent) => {
     if (event.key !== THEME_STORAGE_KEY && event.key !== null) return;
-    applyTheme(readStoredMode());
+    transientMode = undefined;
+    applyTheme(readStoredMode() ?? getThemeMode());
     onChange();
   };
 
-  // The head script initializes this before paint; this also covers CSP/no-script
-  // fallbacks without changing the server snapshot used for hydration.
-  if (!isThemeMode(document.documentElement.dataset.themeMode)) applyTheme(readStoredMode());
   window.addEventListener(THEME_EVENT, onChange);
   window.addEventListener('storage', onStorageChange);
   if (typeof system.addEventListener === 'function') system.addEventListener('change', onSystemChange);
   else system.addListener(onSystemChange);
+
+  // A preference can change between the head script and hydration. Subscribe
+  // first, then reconcile so that neither this gap nor a missing script leaves
+  // an old palette active. Failed writes retain the newer in-session choice.
+  applyTheme(transientMode ?? readStoredMode() ?? getThemeMode());
 
   return () => {
     window.removeEventListener(THEME_EVENT, onChange);

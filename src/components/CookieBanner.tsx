@@ -33,9 +33,12 @@ export function CookieBanner() {
 
     const root = document.documentElement;
     const reserveSpace = () => {
-      const { height, bottom } = element.getBoundingClientRect();
+      const { height, bottom, left } = element.getBoundingClientRect();
       const bottomGap = Math.max(0, window.innerHeight - bottom);
       root.style.setProperty('--cookie-reserve', `${Math.ceil(height + bottomGap + 16)}px`);
+      const hero = document.querySelector<HTMLElement>('.hero-bottom');
+      const heroReserve = hero ? Math.max(0, hero.getBoundingClientRect().right - left + 16) : 0;
+      root.style.setProperty('--cookie-hero-reserve', `${Math.ceil(heroReserve)}px`);
     };
     reserveSpace();
     const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(reserveSpace);
@@ -48,6 +51,7 @@ export function CookieBanner() {
       window.removeEventListener('resize', reserveSpace);
       window.visualViewport?.removeEventListener('resize', reserveSpace);
       root.style.removeProperty('--cookie-reserve');
+      root.style.removeProperty('--cookie-hero-reserve');
     };
   }, [visible]);
 
@@ -74,7 +78,7 @@ export function CookieBanner() {
         <p id="cookie-title" className="text-xs font-semibold text-bright">{copy.title}</p>
         <p className="cookie-description text-xs leading-relaxed text-ui-muted">
           {copy.description}{" "}
-          <PrivacyLink className="text-ui-link underline underline-offset-4 hover:text-bright">{copy.policyLabel}</PrivacyLink>
+          <PrivacyLink className="inline-flex min-h-11 min-w-11 items-center align-middle text-ui-link underline underline-offset-4 hover:text-bright">{copy.policyLabel}</PrivacyLink>
         </p>
       </div>
       <div className="cookie-actions grid w-full min-w-0 shrink-0 grid-cols-2 gap-2">

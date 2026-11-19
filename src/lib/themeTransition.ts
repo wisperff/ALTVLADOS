@@ -1,7 +1,7 @@
 'use client';
 
 import { flushSync } from 'react-dom';
-import { getColorTheme, setThemeMode, type ColorTheme } from './theme';
+import { getColorTheme, setThemeMode, THEME_STORAGE_KEY, type ColorTheme } from './theme';
 
 type ThemeRun = {
   target: ColorTheme;
@@ -101,12 +101,19 @@ export function createThemeTransitionController() {
     const interrupt = () => { if (active === run) stop(run, true); };
     const onMotionChange = () => { if (motion.matches) interrupt(); };
     const onVisibilityChange = () => { if (document.hidden) interrupt(); };
+    const onStorageChange = (event: StorageEvent) => {
+      if (event.key !== THEME_STORAGE_KEY && event.key !== null) return;
+      // A newer cross-tab preference owns the live palette. Never let this
+      // pending snapshot update overwrite it or keep showing an older palette.
+      if (active === run) stop(run, false);
+    };
     window.addEventListener('resize', interrupt, { passive: true });
     window.addEventListener('wheel', interrupt, { passive: true });
     window.addEventListener('touchstart', interrupt, { passive: true });
     // Restore normal CSS transitions before another control handles input.
     window.addEventListener('pointerdown', interrupt, { passive: true });
     window.addEventListener('keydown', interrupt, { capture: true });
+    window.addEventListener('storage', onStorageChange);
     viewport?.addEventListener('resize', interrupt, { passive: true });
     viewport?.addEventListener('scroll', interrupt, { passive: true });
     document.addEventListener('visibilitychange', onVisibilityChange);
@@ -118,6 +125,7 @@ export function createThemeTransitionController() {
       window.removeEventListener('touchstart', interrupt);
       window.removeEventListener('pointerdown', interrupt);
       window.removeEventListener('keydown', interrupt, true);
+      window.removeEventListener('storage', onStorageChange);
       viewport?.removeEventListener('resize', interrupt);
       viewport?.removeEventListener('scroll', interrupt);
       document.removeEventListener('visibilitychange', onVisibilityChange);

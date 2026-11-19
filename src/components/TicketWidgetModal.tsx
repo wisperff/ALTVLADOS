@@ -38,10 +38,32 @@ function secureUrl(value?: string) {
   }
 }
 
+function TicketEmbed({ embedUrl, title, loadingLabel }: {
+  embedUrl: string;
+  title: string;
+  loadingLabel: string;
+}) {
+  const [loading, setLoading] = useState(true);
+
+  return (
+    <>
+      {loading && <p role="status" className="ticket-loading-note text-sm text-ui-muted">{loadingLabel}</p>}
+      <iframe
+        title={title}
+        src={embedUrl}
+        loading="lazy"
+        referrerPolicy="strict-origin-when-cross-origin"
+        allow="payment"
+        onLoad={() => setLoading(false)}
+        className="h-[55dvh] min-h-80 w-full border-0 bg-operator"
+      />
+    </>
+  );
+}
+
 export default function TicketWidgetModal({ show, isOpen, revision, onClose, onExited }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const backdropGesture = useRef<BackdropGesture | null>(null);
-  const [frameLoading, setFrameLoading] = useState(true);
   const copy = site.tickets;
   const embedUrl = secureUrl(show?.embedUrl || copy.embedUrl);
   const scriptUrl = secureUrl(copy.scriptUrl);
@@ -190,15 +212,11 @@ export default function TicketWidgetModal({ show, isOpen, revision, onClose, onE
             </div>
           ) : embedUrl ? (
             <div className="ticket-copy-surface">
-              {frameLoading && <p role="status" className="ticket-loading-note text-sm text-ui-muted">{copy.loadingLabel}</p>}
-              <iframe
+              <TicketEmbed
+                key={embedUrl}
+                embedUrl={embedUrl}
                 title={copy.title}
-                src={embedUrl}
-                loading="lazy"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allow="payment"
-                onLoad={() => setFrameLoading(false)}
-                className="h-[55dvh] min-h-80 w-full border-0 bg-operator"
+                loadingLabel={copy.loadingLabel}
               />
               {scriptUrl && <Script id="altzavod-ticket-operator" src={scriptUrl} strategy="lazyOnload" />}
               <a className="mt-4 inline-flex min-h-11 items-center text-sm text-ui-secondary underline underline-offset-4 hover:text-bright" href={embedUrl} target="_blank" rel="noopener noreferrer">{copy.fallbackLabel}</a>

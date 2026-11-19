@@ -80,7 +80,14 @@ export function Header() {
   }, [applyPhase, releaseMenuScroll, revealHeader]);
 
   const closeMenu = useCallback((request: CloseRequest = {}) => {
-    if (phaseRef.current === 'closing') return;
+    if (phaseRef.current === 'closing') {
+      // Honor a new action without extending the held exit. Repeated dismissal
+      // must not discard navigation/tickets that are already waiting for unlock.
+      if (request.afterExit || (!pendingClose.current?.afterExit && request.restoreFocus)) {
+        pendingClose.current = request;
+      }
+      return;
+    }
     if (phaseRef.current === 'closed') {
       revealHeader(true);
       request.afterExit?.();
@@ -288,7 +295,7 @@ export function Header() {
     if (!menuMounted) return;
 
     const onKey = (event: KeyboardEvent) => {
-      if (!menuOpenRef.current) return;
+      if (!menuOpenRef.current || document.querySelector('dialog[open]')) return;
       if (event.key === 'Escape') {
         event.preventDefault();
         closeMenu({ restoreFocus: true });
