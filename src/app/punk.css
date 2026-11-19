@@ -142,3 +142,81 @@ body::after {
   :root[data-theme='light'] .ticket-dialog { --ticket-carpet-frame: 44px; }
 }
 
+/* A woven runner belongs only to the legal area; existing app layers stay intact. */
+.footer-rug-zone {
+  --footer-rug-panel: color-mix(in srgb, var(--page-bg) 85%, transparent);
+  --footer-rug-highlight: var(--footer-rug-panel);
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: 16px;
+  min-width: 0;
+  min-height: 360px;
+  margin-top: 40px;
+  padding: 40px 12px;
+  overflow: hidden;
+  border-block: 1px solid var(--border-subtle);
+}
+.footer-rug-art {
+  position: absolute;
+  z-index: 0;
+  inset: 12px auto 12px 50%;
+  width: 190px;
+  max-width: calc(100% - 24px);
+  opacity: .32;
+  transform: translateX(-50%);
+  pointer-events: none;
+  user-select: none;
+}
+.footer-rug-runner {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 8px 12px var(--elevation-shadow));
+}
+.footer-rug-panel {
+  position: relative;
+  z-index: 10;
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--footer-rug-panel);
+  overflow-wrap: anywhere;
+}
+.footer-rug-links { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.footer-rug-zone #privacy[data-privacy-highlight='true'] { background: var(--footer-rug-highlight); }
+
+@media (min-width: 768px) {
+  .footer-rug-zone {
+    --footer-rug-panel: transparent;
+    --footer-rug-highlight: var(--telegram-surface);
+    grid-template-columns: minmax(0, 1fr) 160px minmax(0, 1fr);
+    column-gap: 24px;
+    row-gap: 20px;
+    min-height: 420px;
+    padding-block: 32px;
+  }
+  .footer-rug-art {
+    inset: 50% auto auto 50%;
+    width: 160px;
+    height: 360px;
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  .footer-rug-panel { padding: 0; }
+  .footer-rug-legal { grid-column: 1; grid-row: 1; }
+  .footer-rug-links { grid-column: 3; grid-row: 1; align-items: flex-end; text-align: right; }
+  .footer-rug-privacy { grid-column: 1; grid-row: 2; }
+}
+@media (min-width: 1024px) {
+  .footer-rug-zone {
+    grid-template-columns: minmax(0, 1fr) 210px minmax(0, 1fr);
+    column-gap: 40px;
+    min-height: 480px;
+  }
+  .footer-rug-art { width: 210px; height: 420px; }
+}
+
