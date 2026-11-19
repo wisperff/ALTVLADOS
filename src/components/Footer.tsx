@@ -10,6 +10,12 @@ export function Footer() {
   return (
     <footer className="site-footer" style={{ paddingBottom: 'var(--cookie-reserve, 0px)' }}>
       <div className="section-shell !py-10 sm:!py-14">
+        <div className="footer-rug-zone">
+          <div className="footer-rug-art pointer-events-none select-none" aria-hidden="true">
+            <RagRugRunner className="footer-rug-runner" orientation="horizontal" />
+          </div>
+        </div>
+
         <div className="footer-main flex flex-col justify-between gap-6 lg:flex-row lg:items-start">
           <div className="min-w-0">
             <a href="#top" className="footer-brand inline-flex max-w-full items-center gap-3" aria-label={site.ui.home}>
@@ -33,20 +39,17 @@ export function Footer() {
           <a href="#top" className="footer-back-to-top flex min-h-11 w-fit items-center gap-4 text-xs text-copy">{site.ui.backToTop}<span className="flex h-10 w-10 items-center justify-center border border-edge-medium"><Icon name="arrowUpRight" className="h-4 w-4" /></span></a>
         </div>
 
-        <div className="footer-rug-zone">
-          <div className="footer-rug-art pointer-events-none select-none" aria-hidden="true">
-            <RagRugRunner className="footer-rug-runner" orientation="horizontal" />
-          </div>
-          <div className="footer-rug-legal footer-rug-panel">
+        <div className="footer-information">
+          <div className="footer-legal">
             <p className="text-xs text-secondary">{footer.legalName}</p>
             <p className="footer-legal-details mt-2 max-w-lg text-xs leading-relaxed text-detail">{footer.legalDetails}</p>
           </div>
-          <div className="footer-legal-links footer-rug-links footer-rug-panel">
+          <div className="footer-legal-links">
             <PrivacyLink className="inline-flex min-h-11 items-center text-xs underline decoration-edge-decoration underline-offset-4">{footer.privacy.label}</PrivacyLink>
             {offerUrl ? <a href={offerUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-xs underline decoration-edge-decoration underline-offset-4">{footer.offer.label}</a> : <p className="text-xs text-detail">{footer.offer.pendingLabel}</p>}
           </div>
           {!footer.privacy.href && (
-            <PrivacyDisclosure className="footer-rug-privacy footer-rug-panel scroll-mt-24 text-xs text-detail">
+            <PrivacyDisclosure className="footer-privacy scroll-mt-24 text-xs text-detail">
               <summary className="w-fit cursor-pointer text-secondary">{footer.privacy.title}</summary>
               <p className="footer-privacy-copy mt-3 max-w-3xl leading-relaxed">{footer.privacy.body}</p>
             </PrivacyDisclosure>
