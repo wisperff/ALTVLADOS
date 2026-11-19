@@ -1,11 +1,14 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { site } from '@/data/site';
-import { getServerColorTheme, getColorTheme, setThemeMode, subscribeToTheme } from '@/lib/theme';
+import { getServerColorTheme, getColorTheme, subscribeToTheme } from '@/lib/theme';
+import { createThemeTransitionController } from '@/lib/themeTransition';
 
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribeToTheme, getColorTheme, getServerColorTheme);
+  const transition = useRef<ReturnType<typeof createThemeTransitionController> | null>(null);
+  useEffect(() => () => transition.current?.cancel(), []);
   const copy = site.ui.theme;
   const label = theme === 'light' ? copy.switchToDark : copy.switchToLight;
 
@@ -15,7 +18,10 @@ export function ThemeToggle() {
       className="theme-toggle"
       aria-label={label}
       title={label}
-      onClick={() => setThemeMode(getColorTheme() === 'light' ? 'dark' : 'light')}
+      onClick={event => {
+        transition.current ??= createThemeTransitionController();
+        transition.current.toggle(event.currentTarget);
+      }}
     >
       <svg className="theme-icon" data-mode="light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true" focusable="false">
         <circle cx="12" cy="12" r="4" />
