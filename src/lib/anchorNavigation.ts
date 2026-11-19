@@ -30,7 +30,7 @@ function focusTarget(target: HTMLElement) {
 
 // Called after a mobile menu has finished closing and released its body lock.
 // Native scrolling remains interruptible; history/back/forward are browser-owned.
-export function navigateToAnchor(href: string): boolean {
+export function navigateToAnchor(href: string, block: 'start' | 'nearest' = 'start'): boolean {
   const target = getAnchorTarget(href);
   if (!target) return false;
 
@@ -57,6 +57,22 @@ export function navigateToAnchor(href: string): boolean {
   const hash = new URL(href, window.location.href).hash;
 
   if (window.location.hash !== hash) window.history.pushState(window.history.state, '', hash);
+  if (block === 'nearest') {
+    const rect = target.getBoundingClientRect();
+    const bottom = window.innerHeight - pixels(window.getComputedStyle(root).scrollPaddingBottom) -
+      pixels(window.getComputedStyle(target).scrollMarginBottom);
+    const above = rect.top < offset - 2;
+    const below = rect.bottom > bottom + 2;
+    // Native nearest alignment leaves fully visible or viewport-spanning blocks in place.
+    if (above !== below) {
+      target.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'nearest',
+        inline: 'nearest',
+      });
+    }
+    return true;
+  }
   if (Math.abs(window.scrollY - destination) > 2) {
     target.scrollIntoView({
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',

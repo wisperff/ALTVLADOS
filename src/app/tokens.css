@@ -18,7 +18,7 @@
   --surface-raised: #1c1c21;
   --surface-cookie: #141416;
   --surface-inset: rgb(255 255 255 / 2.5%);
-  --header-bg: rgb(9 9 11 / 94%);
+  --header-bg: rgb(9 9 11 / 97%);
   --text-primary: #f4f4f5;
   --text-bright: var(--text-primary);
   --text-muted: #a1a1aa;
@@ -123,7 +123,7 @@
   --surface-raised: #fff;
   --surface-cookie: #faf9f6;
   --surface-inset: rgb(17 17 20 / 3%);
-  --header-bg: rgb(239 237 232 / 94%);
+  --header-bg: rgb(239 237 232 / 97%);
   --text-primary: #111114;
   --text-muted: #52525b;
   --text-copy: #3f3f46;
