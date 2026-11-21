@@ -32,24 +32,47 @@ export function CookieBanner() {
     if (!visible || !element) return;
 
     const root = document.documentElement;
+    const hero = document.querySelector<HTMLElement>('.hero-bottom');
+    const wide = window.matchMedia('(min-width: 640px)');
+    const viewport = window.visualViewport;
+    let frame: number | null = null;
+    let active = true;
+    let lastReserve: string | undefined;
+    let lastHeroReserve: string | undefined;
+
     const reserveSpace = () => {
+      frame = null;
+      if (!active) return;
+      // Read both boxes before updating variables that can affect page layout.
       const { height, bottom, left } = element.getBoundingClientRect();
+      const heroRight = wide.matches ? hero?.getBoundingClientRect().right : undefined;
       const bottomGap = Math.max(0, window.innerHeight - bottom);
-      root.style.setProperty('--cookie-reserve', `${Math.ceil(height + bottomGap + 16)}px`);
-      const hero = document.querySelector<HTMLElement>('.hero-bottom');
-      const heroReserve = hero ? Math.max(0, hero.getBoundingClientRect().right - left + 16) : 0;
-      root.style.setProperty('--cookie-hero-reserve', `${Math.ceil(heroReserve)}px`);
+      const reserve = `${Math.ceil(height + bottomGap + 16)}px`;
+      const heroReserve = `${Math.ceil(heroRight === undefined ? 0 : Math.max(0, heroRight - left + 16))}px`;
+      if (reserve !== lastReserve) {
+        root.style.setProperty('--cookie-reserve', reserve);
+        lastReserve = reserve;
+      }
+      if (heroReserve !== lastHeroReserve) {
+        root.style.setProperty('--cookie-hero-reserve', heroReserve);
+        lastHeroReserve = heroReserve;
+      }
+    };
+    const scheduleReserve = () => {
+      if (active && frame === null) frame = window.requestAnimationFrame(reserveSpace);
     };
     reserveSpace();
-    const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(reserveSpace);
+    const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(scheduleReserve);
     observer?.observe(element);
-    window.addEventListener('resize', reserveSpace, { passive: true });
-    window.visualViewport?.addEventListener('resize', reserveSpace, { passive: true });
+    window.addEventListener('resize', scheduleReserve, { passive: true });
+    viewport?.addEventListener('resize', scheduleReserve, { passive: true });
 
     return () => {
+      active = false;
+      if (frame !== null) window.cancelAnimationFrame(frame);
       observer?.disconnect();
-      window.removeEventListener('resize', reserveSpace);
-      window.visualViewport?.removeEventListener('resize', reserveSpace);
+      window.removeEventListener('resize', scheduleReserve);
+      viewport?.removeEventListener('resize', scheduleReserve);
       root.style.removeProperty('--cookie-reserve');
       root.style.removeProperty('--cookie-hero-reserve');
     };

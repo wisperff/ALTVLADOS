@@ -2,6 +2,7 @@ import { site } from '@/data/site';
 import { Icon } from './Icon';
 import { AmbientStage } from './AmbientStage';
 import { HeroArtwork } from './HeroArtwork';
+import { Marquee } from './Marquee';
 import './ambient.css';
 
 export function HeroSection() {
@@ -28,7 +29,7 @@ export function HeroSection() {
         </div>
         <div className="hero-bottom"><span className="hero-city">{site.hero.city}</span><a className="hero-scroll" href="#shows">{site.hero.scroll}<Icon name="arrowDown" /></a></div>
       </div>
-      <div className="ticker" aria-hidden="true">
+      <Marquee>
         <div className="ticker-motion">
           {[0, 1].map(track => (
             <div className="ticker-track" key={track}>
@@ -43,7 +44,7 @@ export function HeroSection() {
             </div>
           ))}
         </div>
-      </div>
+      </Marquee>
     </section>
   );
 }

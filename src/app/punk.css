@@ -92,6 +92,7 @@ body::after {
   color: var(--on-accent);
 }
 .ticker-motion { display: flex; width: max-content; will-change: transform; animation: marquee 24s linear infinite; }
+.ticker[data-ticker-paused='true'] .ticker-motion { animation-play-state: paused; will-change: auto; }
 .ticker-track { display: flex; flex-shrink: 0; align-items: center; justify-content: space-around; min-width: 100vw; gap: 30px; padding: 16px 15px; }
 .ticker-track > span {
   display: flex;
