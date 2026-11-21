@@ -14,6 +14,8 @@ type ThemeRun = {
 };
 
 const directionClasses = ['theme-transition-to-light', 'theme-transition-to-dark'];
+const geometryTolerance = 2;
+const scaleTolerance = 0.001;
 
 /** One small imperative controller per toggle; no page or menu state is involved. */
 export function createThemeTransitionController() {
@@ -78,15 +80,45 @@ export function createThemeTransitionController() {
     let y: number;
     let radius: number;
     const viewport = window.visualViewport;
+    let orientation: ScreenOrientation | undefined;
+    let coarseViewport: boolean;
+    const readGeometry = () => {
+      if (!button.isConnected) throw new Error('Theme control is disconnected');
+      const rect = button.getBoundingClientRect();
+      const geometry = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+        width: rect.width,
+        height: rect.height,
+        windowWidth: window.innerWidth,
+        windowHeight: window.innerHeight,
+        layoutWidth: root.clientWidth,
+        visualWidth: viewport ? viewport.width : window.innerWidth,
+        scale: viewport ? viewport.scale : 1,
+        offsetLeft: viewport ? viewport.offsetLeft : 0,
+        offsetTop: viewport ? viewport.offsetTop : 0,
+        angle: orientation?.angle ?? 0,
+      };
+      if (!Object.values(geometry).every(Number.isFinite) ||
+          geometry.width <= 0 || geometry.height <= 0 ||
+          geometry.windowWidth <= 0 || geometry.windowHeight <= 0 ||
+          geometry.layoutWidth <= 0 || geometry.visualWidth <= 0 || geometry.scale <= 0) {
+        throw new Error('Theme geometry is unavailable');
+      }
+      return geometry;
+    };
+    let baseline: ReturnType<typeof readGeometry>;
     try {
       // The class removes header motion/blur before this synchronous layout read.
       // Its React visibility state must agree before the native snapshots begin.
       if (onPrepareTransition) flushSync(onPrepareTransition);
-      const rect = button.getBoundingClientRect();
+      orientation = window.screen?.orientation;
+      baseline = readGeometry();
+      coarseViewport = window.matchMedia('(pointer: coarse)').matches;
       // Fixed controls and root snapshots share CSS viewport coordinates.
       // Adding visualViewport offsets shifts the wave away from the button.
-      x = Math.round(rect.left + rect.width / 2);
-      y = Math.round(rect.top + rect.height / 2);
+      x = Math.round(baseline.x);
+      y = Math.round(baseline.y);
       radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
       run.origin = ['--theme-x', '--theme-y'].map(name => ({
         name, value: root.style.getPropertyValue(name), priority: root.style.getPropertyPriority(name),
@@ -99,6 +131,36 @@ export function createThemeTransitionController() {
     }
 
     const interrupt = () => { if (active === run) stop(run, true); };
+    let geometryFrame: number | undefined;
+    const checkGeometry = () => {
+      geometryFrame = undefined;
+      if (active !== run || run.cancelled) return;
+      try {
+        const current = readGeometry();
+        // Compare with the original unrounded geometry, never the previous
+        // sample: a series of small shifts must not conceal cumulative drift.
+        const moved = (['x', 'y', 'width', 'height', 'windowWidth', 'layoutWidth', 'visualWidth', 'offsetLeft', 'offsetTop'] as const)
+          .some(key => Math.abs(current[key] - baseline[key]) > geometryTolerance);
+        const zoomed = Math.abs(current.scale - baseline.scale) > scaleTolerance + Number.EPSILON;
+        const rotated = current.angle !== baseline.angle;
+        // Mobile browser chrome can change height/offset without moving the
+        // fixed control. A fine-pointer desktop window resize still invalidates
+        // its snapshots even when the control stays in the same place.
+        const resizedDesktop = !coarseViewport &&
+          Math.abs(current.windowHeight - baseline.windowHeight) > geometryTolerance;
+        if (moved || zoomed || rotated || resizedDesktop) interrupt();
+      } catch {
+        interrupt();
+      }
+    };
+    const scheduleGeometryCheck = () => {
+      if (active !== run || run.cancelled || geometryFrame !== undefined) return;
+      try {
+        geometryFrame = window.requestAnimationFrame(checkGeometry);
+      } catch {
+        interrupt();
+      }
+    };
     const onMotionChange = () => { if (motion.matches) interrupt(); };
     const onVisibilityChange = () => { if (document.hidden) interrupt(); };
     const onStorageChange = (event: StorageEvent) => {
@@ -107,27 +169,33 @@ export function createThemeTransitionController() {
       // pending snapshot update overwrite it or keep showing an older palette.
       if (active === run) stop(run, false);
     };
-    window.addEventListener('resize', interrupt, { passive: true });
+    window.addEventListener('resize', scheduleGeometryCheck, { passive: true });
+    window.addEventListener('orientationchange', interrupt, { passive: true });
     window.addEventListener('wheel', interrupt, { passive: true });
     window.addEventListener('touchstart', interrupt, { passive: true });
     // Restore normal CSS transitions before another control handles input.
     window.addEventListener('pointerdown', interrupt, { passive: true });
     window.addEventListener('keydown', interrupt, { capture: true });
     window.addEventListener('storage', onStorageChange);
-    viewport?.addEventListener('resize', interrupt, { passive: true });
-    viewport?.addEventListener('scroll', interrupt, { passive: true });
+    viewport?.addEventListener('resize', scheduleGeometryCheck, { passive: true });
+    viewport?.addEventListener('scroll', scheduleGeometryCheck, { passive: true });
+    if (typeof orientation?.addEventListener === 'function') orientation.addEventListener('change', interrupt);
     document.addEventListener('visibilitychange', onVisibilityChange);
     if (typeof motion.addEventListener === 'function') motion.addEventListener('change', onMotionChange);
     else motion.addListener(onMotionChange);
     run.detach = () => {
-      window.removeEventListener('resize', interrupt);
+      if (geometryFrame !== undefined) window.cancelAnimationFrame(geometryFrame);
+      geometryFrame = undefined;
+      window.removeEventListener('resize', scheduleGeometryCheck);
+      window.removeEventListener('orientationchange', interrupt);
       window.removeEventListener('wheel', interrupt);
       window.removeEventListener('touchstart', interrupt);
       window.removeEventListener('pointerdown', interrupt);
       window.removeEventListener('keydown', interrupt, true);
       window.removeEventListener('storage', onStorageChange);
-      viewport?.removeEventListener('resize', interrupt);
-      viewport?.removeEventListener('scroll', interrupt);
+      viewport?.removeEventListener('resize', scheduleGeometryCheck);
+      viewport?.removeEventListener('scroll', scheduleGeometryCheck);
+      if (typeof orientation?.removeEventListener === 'function') orientation.removeEventListener('change', interrupt);
       document.removeEventListener('visibilitychange', onVisibilityChange);
       if (typeof motion.removeEventListener === 'function') motion.removeEventListener('change', onMotionChange);
       else motion.removeListener(onMotionChange);
