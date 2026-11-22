@@ -232,16 +232,21 @@ export function createThemeTransitionController() {
       const onHidden = () => { if (document.hidden) clear(); };
       const onClick = (event: MouseEvent) => {
         const id = 'pointerId' in event ? (event as PointerEvent).pointerId : undefined;
-        const forward = window.performance.now() - started < pointerRelayMs &&
-          event.isTrusted && !event.defaultPrevented && event.target === root &&
+        const gesture = window.performance.now() - started < pointerRelayMs &&
+          event.isTrusted && !event.defaultPrevented &&
           event.button === 0 && event.detail > 0 &&
           !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey &&
           (id === undefined || id === pointer.pointerId) &&
           Math.hypot(event.clientX - pointer.clientX, event.clientY - pointer.clientY) <= pointerSlop &&
-          withinControl(pointer.clientX, pointer.clientY) && withinControl(event.clientX, event.clientY, true);
+          withinControl(pointer.clientX, pointer.clientY) && withinControl(event.clientX, event.clientY);
+        const forward = gesture && event.target === root && withinControl(event.clientX, event.clientY, true);
+        const direct = gesture && event.target instanceof Node && button.contains(event.target);
         // A real button-targeted click continues to React normally. Clearing
         // first also makes focus changes and re-entrant toggles safe.
         clear();
+        // A busy browser can deliver mouseup/click after the input quiet window
+        // expired. This is still the same accepted overlapping gesture.
+        if (forward || direct) state.quietUntil = Math.max(state.quietUntil, window.performance.now() + burstQuietMs);
         if (forward) {
           button.focus({ preventScroll: true });
           toggle(button, onPrepareTransition);
