@@ -166,16 +166,23 @@ export function createThemeTransitionController() {
     }
 
     const interrupt = () => { if (active === run) stop(run, true); };
+    const interruptFromInput = () => {
+      if (active !== run) return;
+      // Root snapshots can retarget a tap to <html>. Native finished may settle
+      // before its compatibility click; keep that click in the same burst.
+      state.quietUntil = Math.max(state.quietUntil, window.performance.now() + burstQuietMs);
+      interrupt();
+    };
     const onPointerInput = (event: Event) => {
       // A real tap reaches window before React's click handler. Leave taps on
       // this control to toggle(), including events from its nested SVG icon.
       const multiTouch = event.type === 'touchstart' && 'touches' in event &&
         (event as TouchEvent).touches.length > 1;
-      if (multiTouch || !event.composedPath().includes(button)) interrupt();
+      if (multiTouch || !event.composedPath().includes(button)) interruptFromInput();
     };
     const onKeyInput = (event: KeyboardEvent) => {
       const activatesButton = event.key === 'Enter' || event.key === ' ';
-      if (!activatesButton || !event.composedPath().includes(button)) interrupt();
+      if (!activatesButton || !event.composedPath().includes(button)) interruptFromInput();
     };
     let geometryFrame: number | undefined;
     const checkGeometry = () => {
@@ -217,11 +224,11 @@ export function createThemeTransitionController() {
     };
     window.addEventListener('resize', scheduleGeometryCheck, { passive: true });
     window.addEventListener('orientationchange', interrupt, { passive: true });
-    window.addEventListener('wheel', interrupt, { passive: true });
+    window.addEventListener('wheel', interruptFromInput, { passive: true });
     window.addEventListener('touchstart', onPointerInput, { passive: true });
     // Restore normal CSS transitions before another control handles input.
     window.addEventListener('pointerdown', onPointerInput, { passive: true });
-    window.addEventListener('pointercancel', interrupt, { passive: true });
+    window.addEventListener('pointercancel', interruptFromInput, { passive: true });
     window.addEventListener('keydown', onKeyInput, { capture: true });
     window.addEventListener('storage', onStorageChange);
     viewport?.addEventListener('resize', scheduleGeometryCheck, { passive: true });
@@ -235,10 +242,10 @@ export function createThemeTransitionController() {
       geometryFrame = undefined;
       window.removeEventListener('resize', scheduleGeometryCheck);
       window.removeEventListener('orientationchange', interrupt);
-      window.removeEventListener('wheel', interrupt);
+      window.removeEventListener('wheel', interruptFromInput);
       window.removeEventListener('touchstart', onPointerInput);
       window.removeEventListener('pointerdown', onPointerInput);
-      window.removeEventListener('pointercancel', interrupt);
+      window.removeEventListener('pointercancel', interruptFromInput);
       window.removeEventListener('keydown', onKeyInput, true);
       window.removeEventListener('storage', onStorageChange);
       viewport?.removeEventListener('resize', scheduleGeometryCheck);
