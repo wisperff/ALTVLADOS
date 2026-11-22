@@ -183,29 +183,35 @@ export function createThemeTransitionController() {
     };
     const armSnapshotClick = (pointer: PointerEvent) => {
       // Native root captures can send a whole mouse gesture to <html>, even
-      // after skipping. Relay only a genuine gesture begun on this control.
+      // after skipping. Relay only a genuine gesture begun on an eligible header control.
       if (active !== run || !run.capture || !pointer.isTrusted || pointer.defaultPrevented ||
           pointer.target !== root || pointer.button !== 0 || pointer.isPrimary === false ||
           pointer.altKey || pointer.ctrlKey || pointer.metaKey || pointer.shiftKey) return;
-      const withinControl = (x: number, y: number, requireLiveHit = false) => {
-        if (!Number.isFinite(x) || !Number.isFinite(y) || !button.isConnected || button.ownerDocument !== document ||
-            button.matches(':disabled, [aria-disabled="true"]') || button.closest('[inert]') ||
+      const withinControl = (control: HTMLButtonElement, x: number, y: number, requireLiveHit = false) => {
+        if (!Number.isFinite(x) || !Number.isFinite(y) || !control.isConnected || control.ownerDocument !== document ||
+            control.matches(':disabled, [aria-disabled="true"]') || control.closest('[inert]') ||
             document.querySelector('dialog[open]')) return false;
         try {
-          const rect = button.getBoundingClientRect();
-          const style = window.getComputedStyle(button);
+          const rect = control.getBoundingClientRect();
+          const style = window.getComputedStyle(control);
           return [rect.left, rect.top, rect.width, rect.height].every(Number.isFinite) &&
             style.visibility === 'visible' && style.pointerEvents !== 'none' &&
             rect.width > 0 && rect.height > 0 &&
-            Math.hypot((x - rect.left - rect.width / 2) / (rect.width / 2),
-              (y - rect.top - rect.height / 2) / (rect.height / 2)) <= 1 &&
+            (control === button
+              ? Math.hypot((x - rect.left - rect.width / 2) / (rect.width / 2),
+                (y - rect.top - rect.height / 2) / (rect.height / 2)) <= 1
+              : x >= rect.left && x <= rect.left + rect.width && y >= rect.top && y <= rect.top + rect.height) &&
             (!requireLiveHit || (typeof document.elementFromPoint === 'function' &&
-              button.contains(document.elementFromPoint(x, y))));
+              control.contains(document.elementFromPoint(x, y))));
         } catch {
           return false;
         }
       };
-      if (!withinControl(pointer.clientX, pointer.clientY)) return;
+      const headerControls = button.closest('.site-header')?.querySelectorAll<HTMLButtonElement>(
+        'button.header-ticket, button.menu-toggle',
+      ) ?? [];
+      const control = [button, ...headerControls].find(candidate => withinControl(candidate, pointer.clientX, pointer.clientY));
+      if (!control) return;
       state.cancelPointer?.();
       const started = window.performance.now();
       let watching = true;
@@ -238,9 +244,9 @@ export function createThemeTransitionController() {
           !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey &&
           (id === undefined || id === pointer.pointerId) &&
           Math.hypot(event.clientX - pointer.clientX, event.clientY - pointer.clientY) <= pointerSlop &&
-          withinControl(pointer.clientX, pointer.clientY) && withinControl(event.clientX, event.clientY);
-        const forward = gesture && event.target === root && withinControl(event.clientX, event.clientY, true);
-        const direct = gesture && event.target instanceof Node && button.contains(event.target);
+          withinControl(control, pointer.clientX, pointer.clientY) && withinControl(control, event.clientX, event.clientY);
+        const forward = gesture && event.target === root && withinControl(control, event.clientX, event.clientY, true);
+        const direct = gesture && event.target instanceof Node && control.contains(event.target);
         // A real button-targeted click continues to React normally. Clearing
         // first also makes focus changes and re-entrant toggles safe.
         clear();
@@ -248,8 +254,9 @@ export function createThemeTransitionController() {
         // expired. This is still the same accepted overlapping gesture.
         if (forward || direct) state.quietUntil = Math.max(state.quietUntil, window.performance.now() + burstQuietMs);
         if (forward) {
-          button.focus({ preventScroll: true });
-          toggle(button, onPrepareTransition);
+          control.focus({ preventScroll: true });
+          if (control === button) toggle(button, onPrepareTransition);
+          else control.click();
         }
       };
       cancelPointer = state.cancelPointer = clear;

@@ -243,6 +243,7 @@ html.theme-transitioning .site-header { transform: translate3d(0, 0, 0) !importa
 .site-footer nav a:hover { background: var(--control-hover-layer); }
 .site-footer a[href='#top'] > span:last-child { border-radius: 999px; }
 .site-footer summary { min-height: var(--control-size); padding: 10px 14px; border: 1px solid var(--border-soft); border-radius: var(--radius-pill); background: var(--control-bg); }
+#privacy { scroll-margin-bottom: var(--cookie-reserve, 0px); }
 #privacy[data-privacy-highlight='true'] { border-color: var(--accent); outline: 1px solid var(--accent); outline-offset: 8px; border-radius: var(--radius-card); background: var(--telegram-surface); }
 
 @media (min-width: 640px) {
