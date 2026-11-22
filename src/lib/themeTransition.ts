@@ -187,7 +187,7 @@ export function createThemeTransitionController() {
       if (active !== run || !run.capture || !pointer.isTrusted || pointer.defaultPrevented ||
           pointer.target !== root || pointer.button !== 0 || pointer.isPrimary === false ||
           pointer.altKey || pointer.ctrlKey || pointer.metaKey || pointer.shiftKey) return;
-      const withinControl = (x: number, y: number) => {
+      const withinControl = (x: number, y: number, requireLiveHit = false) => {
         if (!Number.isFinite(x) || !Number.isFinite(y) || !button.isConnected || button.ownerDocument !== document ||
             button.matches(':disabled, [aria-disabled="true"]') || button.closest('[inert]') ||
             document.querySelector('dialog[open]')) return false;
@@ -198,7 +198,9 @@ export function createThemeTransitionController() {
             style.visibility === 'visible' && style.pointerEvents !== 'none' &&
             rect.width > 0 && rect.height > 0 &&
             Math.hypot((x - rect.left - rect.width / 2) / (rect.width / 2),
-              (y - rect.top - rect.height / 2) / (rect.height / 2)) <= 1;
+              (y - rect.top - rect.height / 2) / (rect.height / 2)) <= 1 &&
+            (!requireLiveHit || (typeof document.elementFromPoint === 'function' &&
+              button.contains(document.elementFromPoint(x, y))));
         } catch {
           return false;
         }
@@ -236,7 +238,7 @@ export function createThemeTransitionController() {
           !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey &&
           (id === undefined || id === pointer.pointerId) &&
           Math.hypot(event.clientX - pointer.clientX, event.clientY - pointer.clientY) <= pointerSlop &&
-          withinControl(pointer.clientX, pointer.clientY) && withinControl(event.clientX, event.clientY);
+          withinControl(pointer.clientX, pointer.clientY) && withinControl(event.clientX, event.clientY, true);
         // A real button-targeted click continues to React normally. Clearing
         // first also makes focus changes and re-entrant toggles safe.
         clear();
