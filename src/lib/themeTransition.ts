@@ -3,12 +3,18 @@
 import { flushSync } from 'react-dom';
 import { getColorTheme, setThemeMode, THEME_STORAGE_KEY, type ColorTheme } from './theme';
 
+type NativeCapture = {
+  pendingTarget?: ColorTheme;
+  cancel?: () => void;
+};
+
 type ThemeRun = {
   target: ColorTheme;
   applied: boolean;
   cancelled: boolean;
   transition?: ViewTransition;
   animation?: Animation;
+  capture?: NativeCapture;
   detach?: () => void;
   origin?: Array<{ name: string; value: string; priority: string }>;
 };
@@ -16,6 +22,10 @@ type ThemeRun = {
 const directionClasses = ['theme-transition-to-light', 'theme-transition-to-dark'];
 const geometryTolerance = 2;
 const scaleTolerance = 0.001;
+const burstQuietMs = 200;
+// A skipped transition may still be taking its snapshots. Keep its lease until
+// finished settles, even if the button unmounts or another controller takes over.
+const documentTransitions = new WeakMap<Document, { capture?: NativeCapture; quietUntil: number }>();
 
 /** One small imperative controller per toggle; no page or menu state is involved. */
 export function createThemeTransitionController() {
@@ -24,10 +34,16 @@ export function createThemeTransitionController() {
   function commit(run: ThemeRun) {
     if (run.applied) return;
     run.applied = true;
+    if (run.capture) run.capture.pendingTarget = undefined;
     flushSync(() => setThemeMode(run.target));
   }
 
   function release(run: ThemeRun) {
+    if (run.capture) {
+      run.capture.pendingTarget = undefined;
+      run.capture.cancel = undefined;
+      run.capture = undefined;
+    }
     run.animation?.cancel();
     run.animation = undefined;
     run.detach?.();
@@ -57,10 +73,29 @@ export function createThemeTransitionController() {
   }
 
   function toggle(button: HTMLButtonElement, onPrepareTransition?: () => void) {
-    // A second tap can arrive before the browser takes its first snapshot.
-    // Commit that intent once, then invert it; stale callbacks cannot win later.
-    if (active) stop(active, true);
-    const target: ColorTheme = getColorTheme() === 'light' ? 'dark' : 'light';
+    let state = documentTransitions.get(document);
+    if (!state) {
+      state = { quietUntil: 0 };
+      documentTransitions.set(document, state);
+    }
+    // Before the native callback, the first accepted intent is newer than the
+    // live palette. Invert it before canceling, so even/odd taps are preserved.
+    const previous = state.capture?.pendingTarget ??
+      (active && !active.applied ? active.target : getColorTheme());
+    const target: ColorTheme = previous === 'light' ? 'dark' : 'light';
+    const now = window.performance.now();
+    if (active || state.capture || now < state.quietUntil) {
+      state.quietUntil = now + burstQuietMs;
+      state.capture?.cancel?.();
+      if (active) stop(active, false);
+      // Repeated taps still change the actual theme, label and saved preference
+      // immediately; they do not queue another whole-page capture or replay.
+      flushSync(() => {
+        onPrepareTransition?.();
+        setThemeMode(target);
+      });
+      return;
+    }
     const root = document.documentElement;
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (typeof document.startViewTransition !== 'function' ||
@@ -131,6 +166,17 @@ export function createThemeTransitionController() {
     }
 
     const interrupt = () => { if (active === run) stop(run, true); };
+    const onPointerInput = (event: Event) => {
+      // A real tap reaches window before React's click handler. Leave taps on
+      // this control to toggle(), including events from its nested SVG icon.
+      const multiTouch = event.type === 'touchstart' && 'touches' in event &&
+        (event as TouchEvent).touches.length > 1;
+      if (multiTouch || !event.composedPath().includes(button)) interrupt();
+    };
+    const onKeyInput = (event: KeyboardEvent) => {
+      const activatesButton = event.key === 'Enter' || event.key === ' ';
+      if (!activatesButton || !event.composedPath().includes(button)) interrupt();
+    };
     let geometryFrame: number | undefined;
     const checkGeometry = () => {
       geometryFrame = undefined;
@@ -172,10 +218,11 @@ export function createThemeTransitionController() {
     window.addEventListener('resize', scheduleGeometryCheck, { passive: true });
     window.addEventListener('orientationchange', interrupt, { passive: true });
     window.addEventListener('wheel', interrupt, { passive: true });
-    window.addEventListener('touchstart', interrupt, { passive: true });
+    window.addEventListener('touchstart', onPointerInput, { passive: true });
     // Restore normal CSS transitions before another control handles input.
-    window.addEventListener('pointerdown', interrupt, { passive: true });
-    window.addEventListener('keydown', interrupt, { capture: true });
+    window.addEventListener('pointerdown', onPointerInput, { passive: true });
+    window.addEventListener('pointercancel', interrupt, { passive: true });
+    window.addEventListener('keydown', onKeyInput, { capture: true });
     window.addEventListener('storage', onStorageChange);
     viewport?.addEventListener('resize', scheduleGeometryCheck, { passive: true });
     viewport?.addEventListener('scroll', scheduleGeometryCheck, { passive: true });
@@ -189,9 +236,10 @@ export function createThemeTransitionController() {
       window.removeEventListener('resize', scheduleGeometryCheck);
       window.removeEventListener('orientationchange', interrupt);
       window.removeEventListener('wheel', interrupt);
-      window.removeEventListener('touchstart', interrupt);
-      window.removeEventListener('pointerdown', interrupt);
-      window.removeEventListener('keydown', interrupt, true);
+      window.removeEventListener('touchstart', onPointerInput);
+      window.removeEventListener('pointerdown', onPointerInput);
+      window.removeEventListener('pointercancel', interrupt);
+      window.removeEventListener('keydown', onKeyInput, true);
       window.removeEventListener('storage', onStorageChange);
       viewport?.removeEventListener('resize', scheduleGeometryCheck);
       viewport?.removeEventListener('scroll', scheduleGeometryCheck);
@@ -201,14 +249,30 @@ export function createThemeTransitionController() {
       else motion.removeListener(onMotionChange);
     };
 
+    const capture: NativeCapture = {
+      pendingTarget: target,
+      cancel: () => { if (active === run) stop(run, false); },
+    };
+    run.capture = capture;
+    state.capture = capture;
     try {
       run.transition = document.startViewTransition(() => {
         if (!run.cancelled && active === run) commit(run);
       });
     } catch {
+      if (state.capture === capture) state.capture = undefined;
       stop(run, true);
       return;
     }
+    const finishCapture = () => {
+      // Keep visual cleanup and lease release atomic. Another controller must
+      // not start a snapshot between this run's finished and its class cleanup.
+      try {
+        release(run);
+      } finally {
+        if (state.capture === capture) state.capture = undefined;
+      }
+    };
 
     // Skipped snapshots and unsupported pseudo-element animation must never
     // prevent the preference from changing or leave an unhandled rejection.
@@ -237,7 +301,7 @@ export function createThemeTransitionController() {
     }, fail).catch(fail);
     // Deal with a failed update before finally releases this run's class/fill.
     // A skipped older transition must never clean up a newer wave.
-    void run.transition.finished.catch(fail).finally(() => release(run)).catch(fail);
+    void run.transition.finished.catch(fail).finally(finishCapture).catch(fail);
   }
 
   return {
