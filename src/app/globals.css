@@ -290,7 +290,7 @@ html.theme-transitioning .site-header { transform: translate3d(0, 0, 0) !importa
   .header-actions { gap: 8px; }
   .header-ticket { padding-inline: 12px; }
   .header-brand-mark { width: 36px; height: 36px; }
-  .site-header { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+  .site-header, .mobile-menu-panel { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .glass-surface { background: var(--glass-mobile); backdrop-filter: none; -webkit-backdrop-filter: none; }
   .cookie-notice { background: var(--cookie-surface); }
   .eyebrow { font-size: 10px; letter-spacing: .08em; }
