@@ -23,13 +23,20 @@ const directionClasses = ['theme-transition-to-light', 'theme-transition-to-dark
 const geometryTolerance = 2;
 const scaleTolerance = 0.001;
 const burstQuietMs = 200;
+const pointerRelayMs = 2_000;
+const pointerSlop = 8;
 // A skipped transition may still be taking its snapshots. Keep its lease until
 // finished settles, even if the button unmounts or another controller takes over.
-const documentTransitions = new WeakMap<Document, { capture?: NativeCapture; quietUntil: number }>();
+const documentTransitions = new WeakMap<Document, {
+  capture?: NativeCapture;
+  quietUntil: number;
+  cancelPointer?: () => void;
+}>();
 
 /** One small imperative controller per toggle; no page or menu state is involved. */
 export function createThemeTransitionController() {
   let active: ThemeRun | undefined;
+  let cancelPointer: (() => void) | undefined;
 
   function commit(run: ThemeRun) {
     if (run.applied) return;
@@ -78,6 +85,7 @@ export function createThemeTransitionController() {
       state = { quietUntil: 0 };
       documentTransitions.set(document, state);
     }
+    state.cancelPointer?.();
     // Before the native callback, the first accepted intent is newer than the
     // live palette. Invert it before canceling, so even/odd taps are preserved.
     const previous = state.capture?.pendingTarget ??
@@ -173,11 +181,88 @@ export function createThemeTransitionController() {
       state.quietUntil = Math.max(state.quietUntil, window.performance.now() + burstQuietMs);
       interrupt();
     };
+    const armSnapshotClick = (pointer: PointerEvent) => {
+      // Native root captures can send a whole mouse gesture to <html>, even
+      // after skipping. Relay only a genuine gesture begun on this control.
+      if (active !== run || !run.capture || !pointer.isTrusted || pointer.defaultPrevented ||
+          pointer.target !== root || pointer.button !== 0 || pointer.isPrimary === false ||
+          pointer.altKey || pointer.ctrlKey || pointer.metaKey || pointer.shiftKey) return;
+      const withinControl = (x: number, y: number) => {
+        if (!Number.isFinite(x) || !Number.isFinite(y) || !button.isConnected || button.ownerDocument !== document ||
+            button.matches(':disabled, [aria-disabled="true"]') || button.closest('[inert]') ||
+            document.querySelector('dialog[open]')) return false;
+        try {
+          const rect = button.getBoundingClientRect();
+          const style = window.getComputedStyle(button);
+          return [rect.left, rect.top, rect.width, rect.height].every(Number.isFinite) &&
+            style.visibility === 'visible' && style.pointerEvents !== 'none' &&
+            rect.width > 0 && rect.height > 0 &&
+            Math.hypot((x - rect.left - rect.width / 2) / (rect.width / 2),
+              (y - rect.top - rect.height / 2) / (rect.height / 2)) <= 1;
+        } catch {
+          return false;
+        }
+      };
+      if (!withinControl(pointer.clientX, pointer.clientY)) return;
+      state.cancelPointer?.();
+      const started = window.performance.now();
+      let watching = true;
+      const clear = () => {
+        if (!watching) return;
+        watching = false;
+        window.clearTimeout(timer);
+        window.removeEventListener('click', onClick, true);
+        window.removeEventListener('pointerdown', clear, true);
+        window.removeEventListener('pointermove', onMove, true);
+        window.removeEventListener('pointercancel', clear, true);
+        window.removeEventListener('keydown', clear, true);
+        window.removeEventListener('wheel', clear, true);
+        window.removeEventListener('contextmenu', clear, true);
+        window.removeEventListener('blur', clear);
+        document.removeEventListener('visibilitychange', onHidden);
+        if (state.cancelPointer === clear) state.cancelPointer = undefined;
+        if (cancelPointer === clear) cancelPointer = undefined;
+      };
+      const onMove = (event: PointerEvent) => {
+        if (event.pointerId !== pointer.pointerId ||
+            Math.hypot(event.clientX - pointer.clientX, event.clientY - pointer.clientY) > pointerSlop) clear();
+      };
+      const onHidden = () => { if (document.hidden) clear(); };
+      const onClick = (event: MouseEvent) => {
+        const id = 'pointerId' in event ? (event as PointerEvent).pointerId : undefined;
+        const forward = window.performance.now() - started < pointerRelayMs &&
+          event.isTrusted && !event.defaultPrevented && event.target === root &&
+          event.button === 0 && event.detail > 0 &&
+          !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey &&
+          (id === undefined || id === pointer.pointerId) &&
+          Math.hypot(event.clientX - pointer.clientX, event.clientY - pointer.clientY) <= pointerSlop &&
+          withinControl(pointer.clientX, pointer.clientY) && withinControl(event.clientX, event.clientY);
+        // A real button-targeted click continues to React normally. Clearing
+        // first also makes focus changes and re-entrant toggles safe.
+        clear();
+        if (forward) {
+          button.focus({ preventScroll: true });
+          toggle(button, onPrepareTransition);
+        }
+      };
+      cancelPointer = state.cancelPointer = clear;
+      window.addEventListener('click', onClick, { capture: true });
+      window.addEventListener('pointerdown', clear, { capture: true, passive: true });
+      window.addEventListener('pointermove', onMove, { capture: true, passive: true });
+      window.addEventListener('pointercancel', clear, { capture: true, passive: true });
+      window.addEventListener('keydown', clear, { capture: true });
+      window.addEventListener('wheel', clear, { capture: true, passive: true });
+      window.addEventListener('contextmenu', clear, { capture: true });
+      window.addEventListener('blur', clear);
+      document.addEventListener('visibilitychange', onHidden);
+      const timer = window.setTimeout(clear, pointerRelayMs);
+    };
     const onPointerInput = (event: Event) => {
       // A real tap reaches window before React's click handler. Leave taps on
       // this control to toggle(), including events from its nested SVG icon.
       const multiTouch = event.type === 'touchstart' && 'touches' in event &&
         (event as TouchEvent).touches.length > 1;
+      if (event.type === 'pointerdown') armSnapshotClick(event as PointerEvent);
       if (multiTouch || !event.composedPath().includes(button)) interruptFromInput();
     };
     const onKeyInput = (event: KeyboardEvent) => {
@@ -313,6 +398,9 @@ export function createThemeTransitionController() {
 
   return {
     toggle,
-    cancel() { if (active) stop(active, false); },
+    cancel() {
+      cancelPointer?.();
+      if (active) stop(active, false);
+    },
   };
 }
