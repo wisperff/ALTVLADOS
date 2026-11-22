@@ -321,10 +321,15 @@ export function Header() {
 
     const media = window.matchMedia('(min-width: 1024px)');
     const onResize = () => {
-      if (media.matches) dismissImmediately();
+      if (!media.matches) return;
+      if (phaseRef.current === 'closing' && pendingClose.current?.afterExit) {
+        // A breakpoint change must complete the action already chosen by the user.
+        cancelMenuMotion();
+        finishClose(revision.current);
+      } else dismissImmediately();
     };
     const resizeFrame = window.requestAnimationFrame(() => {
-      if (media.matches) dismissImmediately();
+      onResize();
     });
     document.addEventListener('keydown', onKey);
     window.addEventListener('resize', onResize);
@@ -338,7 +343,7 @@ export function Header() {
       window.removeEventListener('popstate', dismissImmediately);
       media.removeEventListener('change', onResize);
     };
-  }, [menuMounted, closeMenu, dismissImmediately]);
+  }, [menuMounted, cancelMenuMotion, closeMenu, dismissImmediately, finishClose]);
 
   return (
     <>
